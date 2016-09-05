@@ -27,9 +27,9 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
     //    public static String executePost()
     protected JSONObject doInBackground(Void... nothing) {
-        String var = executePost();
+        String responseStr = executePost();
         try {
-            return JSONProcessing(var);
+            return JSONProcessing(responseStr);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
