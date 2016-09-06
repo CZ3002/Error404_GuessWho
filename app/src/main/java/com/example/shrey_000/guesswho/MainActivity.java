@@ -1,5 +1,6 @@
 package com.example.shrey_000.guesswho;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +11,10 @@ import java.net.URL;
 
 
 import android.util.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.*;
 import java.io.*;
 
@@ -22,6 +27,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         HTTPUtility poster = new HTTPUtility();
         poster.execute();
+
+    }
+
+    public static void getMaps(JSONObject responseObj) throws JSONException {
+        CoordinateExtractor ce = new CoordinateExtractor(responseObj);
+        ce.getLips();
     }
 
 

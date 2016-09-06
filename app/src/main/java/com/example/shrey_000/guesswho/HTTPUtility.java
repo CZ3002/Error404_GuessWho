@@ -37,6 +37,16 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
     }
 
+    protected void onPostExecute(JSONObject responseObj) {
+//        return responseObj;
+//        CoordinateExtractor ce = new CoordinateExtractor(responseObj);
+        try {
+            MainActivity.getMaps(responseObj);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public String executePost()
