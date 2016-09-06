@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     public static void getMaps(JSONObject responseObj) throws JSONException {
         CoordinateExtractor ce = new CoordinateExtractor(responseObj);
         ce.getLips();
+        ce.getEyes();
+        ce.getNose();
     }
 
 
