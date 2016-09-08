@@ -1,5 +1,10 @@
 package com.example.shrey_000.guesswho;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +16,7 @@ import java.net.URL;
 
 
 import android.util.*;
+import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,20 +26,29 @@ import java.io.*;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private CanvasView cv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         HTTPUtility poster = new HTTPUtility();
         poster.execute();
+          cv = (CanvasView) findViewById(R.id.canvas);
 
     }
+
+
+    public void clearCanvas(View v) {
+        cv.clearCanvas();
+    }
+
+
+
 
     public static void getMaps(JSONObject responseObj) throws JSONException {
         CoordinateExtractor ce = new CoordinateExtractor(responseObj);
         ce.getLips();
-        ce.getEyes();
+        ce.findEyes();
         ce.getNose();
     }
 

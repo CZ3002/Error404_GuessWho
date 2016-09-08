@@ -1,7 +1,6 @@
 package com.example.shrey_000.guesswho;
 
 import android.util.Log;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +33,6 @@ public class CoordinateExtractor {
 
         for (String str : keys)
         {
-            //Float val=Float.valueOf(faces.getJSONObject(str).toString());
             Double val=faces.getDouble(str);
             eyesMap.put(str,val);
 
@@ -43,6 +41,29 @@ public class CoordinateExtractor {
         return eyesMap;
 
     }
+
+
+    public HashMap getEyeBrows() throws JSONException {
+
+        JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
+        JSONObject faces = (JSONObject)imagesObj.getJSONArray("faces").get(0);
+        HashMap<String,Double> eyeBrowsMap=new HashMap<String,Double>();
+        String[] keys={"leftEyeBrowLeftX","leftEyeBrowLeftY","leftEyeBrowMiddleX","leftEyeBrowMiddleY",
+                "leftEyeBrowRightX","leftEyeBrowRightY","rightEyeBrowLeftX","rightEyeBrowLeftY",
+                "rightEyeBrowMiddleX","rightEyeBrowMiddleY","rightEyeBrowRightX","rightEyeBrowRightY"
+        };
+
+        for (String str : keys)
+        {
+            Double val=faces.getDouble(str);
+            eyeBrowsMap.put(str,val);
+
+        }
+        Log.d("eye brows map",eyeBrowsMap.toString());
+        return eyeBrowsMap;
+
+    }
+
 
 
     public HashMap getNose() throws JSONException {
@@ -57,7 +78,6 @@ public class CoordinateExtractor {
 
         for (String str : keys)
         {
-            //Float val=Float.valueOf(faces.getJSONObject(str).toString());
             Double val=faces.getDouble(str);
             noseMap.put(str,val);
 
@@ -86,6 +106,46 @@ public class CoordinateExtractor {
     }
 
 
+    public HashMap<String,Double>  findEyes() throws JSONException {
+        HashMap<String,Double> eyesMap=getEyes();
+        HashMap<String,Double> eyeBrowsMap=getEyeBrows();
+
+        // need to find top and bottom of eyes
+        //  for top: y take avg of two eyebrow sides, x remains same as middle of the eye
+        //for bottom: y take dist bw the eye top and eye centre, x remains same as middle of eye
+
+        //right eye top
+        Double rightEyeTopX=eyesMap.get("rightEyeCenterX");
+        Double rightEyeTopY=(eyeBrowsMap.get("rightEyeBrowRightY")+eyeBrowsMap.get("rightEyeBrowLeftY"))/2;
+
+        //right eye bottom
+        Double rightEyeBottomX=eyesMap.get("rightEyeCenterX");
+        Double rightEyeBottomY= 2*(eyesMap.get("rightEyeCenterY")) - (rightEyeTopY);
+
+        //left eye top
+        Double leftEyeTopX=eyesMap.get("leftEyeCenterX");
+        Double leftEyeTopY=(eyeBrowsMap.get("leftEyeBrowRightY")+eyeBrowsMap.get("leftEyeBrowLeftY"))/2;
+
+        //left eye bottom
+        Double leftEyeBottomX=eyesMap.get("leftEyeCenterX");
+        Double leftEyeBottomY= 2*(eyesMap.get("leftEyeCenterY")) - (leftEyeTopY);
+
+        //add all to hashmap
+        eyesMap.put("rightEyeTopX",rightEyeTopX);
+        eyesMap.put("rightEyeTopY",rightEyeTopY);
+        eyesMap.put("rightEyeBottomX",rightEyeBottomX);
+        eyesMap.put("rightEyeBottomY",rightEyeBottomY);
+        eyesMap.put("leftEyeTopX",leftEyeTopX);
+        eyesMap.put("leftEyeTopY",leftEyeTopY);
+        eyesMap.put("leftEyeBottomX",leftEyeBottomX);
+        eyesMap.put("leftEyeBottomY",leftEyeBottomY);
+
+        Log.d("find eyesMap: ",eyesMap.toString());
+
+        return eyesMap;
+
+
+    }
 
 
 
