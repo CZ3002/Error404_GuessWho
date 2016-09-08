@@ -27,13 +27,14 @@ import java.io.*;
 
 public class MainActivity extends AppCompatActivity {
     private CanvasView cv;
+    private CoordinateExtractor ce;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        HTTPUtility poster = new HTTPUtility();
+        cv = (CanvasView) findViewById(R.id.canvas);
+        HTTPUtility poster = new HTTPUtility(cv);
         poster.execute();
-          cv = (CanvasView) findViewById(R.id.canvas);
 
     }
 
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static void getMaps(JSONObject responseObj) throws JSONException {
-        CoordinateExtractor ce = new CoordinateExtractor(responseObj);
+    public void getMaps(JSONObject responseObj) throws JSONException {
+        ce = new CoordinateExtractor(responseObj);
         ce.getLips();
         ce.findEyes();
         ce.getNose();

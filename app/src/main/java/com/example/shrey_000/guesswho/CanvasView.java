@@ -11,14 +11,30 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class CanvasView extends View
 {
-
     Context context;
+    Path fillPath;
+    CoordinateExtractor ce;
 
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
         context = c;
+        fillPath = new Path();
+
+    }
+
+    public void getMaps(JSONObject responseObj) throws JSONException {
+        ce = new CoordinateExtractor(responseObj);
+        ce.getLips();
+        ce.findEyes();
+        ce.getNose();
+    }
+
+    public void setShapes(){
 
     }
 
@@ -32,7 +48,6 @@ public class CanvasView extends View
         Paint paint=new Paint();
         paint.setColor(Color.MAGENTA);
         paint.setStyle(Paint.Style.FILL);
-        Path fillPath = new Path();
 
         fillPath.moveTo(0, 0); // Your origin point
         fillPath.lineTo(800, 0); // First point

@@ -3,6 +3,7 @@ package com.example.shrey_000.guesswho;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -25,6 +26,12 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     public static final String APP_ID = "3a4472cc";
     public static final String APP_KEY = "0962a5979fb26c22e46bcdfea31fc4e4";
 
+    private CanvasView canvasView;
+
+    public HTTPUtility(CanvasView canvasView){
+        this.canvasView = canvasView;
+    }
+
 
     protected JSONObject doInBackground(Void... nothing) {
         String responseStr = executePost();
@@ -40,7 +47,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     protected void onPostExecute(JSONObject responseObj) {
 
         try {
-            MainActivity.getMaps(responseObj);
+            canvasView.getMaps(responseObj);
         } catch (JSONException e) {
             e.printStackTrace();
         }
