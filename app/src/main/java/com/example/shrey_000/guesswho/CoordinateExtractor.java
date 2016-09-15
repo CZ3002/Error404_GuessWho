@@ -37,7 +37,7 @@ public class CoordinateExtractor {
             eyesMap.put(str,val);
 
         }
-        Log.d("eyes map",eyesMap.toString());
+        //Log.d("eyes map",eyesMap.toString());
         return eyesMap;
 
     }
@@ -59,7 +59,7 @@ public class CoordinateExtractor {
             eyeBrowsMap.put(str,val);
 
         }
-        Log.d("eye brows map",eyeBrowsMap.toString());
+       //Log.d("eye brows map",eyeBrowsMap.toString());
         return eyeBrowsMap;
 
     }
@@ -82,7 +82,7 @@ public class CoordinateExtractor {
             noseMap.put(str,val);
 
         }
-        Log.d("nose map: ",noseMap.toString());
+        //Log.d("nose map: ",noseMap.toString());
         return noseMap;
 
     }
@@ -101,7 +101,7 @@ public class CoordinateExtractor {
             lipsMap.put(key, value);
         }
 
-        Log.d("lipsMap", lipsMap.toString());
+        //Log.d("lipsMap", lipsMap.toString());
         return lipsMap;
     }
 
@@ -140,12 +140,13 @@ public class CoordinateExtractor {
         eyesMap.put("leftEyeBottomX",leftEyeBottomX);
         eyesMap.put("leftEyeBottomY",leftEyeBottomY);
 
-        Log.d("find eyesMap: ",eyesMap.toString());
+       // Log.d("find eyesMap: ",eyesMap.toString());
 
         return eyesMap;
 
 
     }
+
 
 
 
