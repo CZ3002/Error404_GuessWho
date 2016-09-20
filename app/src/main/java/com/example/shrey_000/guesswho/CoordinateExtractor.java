@@ -147,6 +147,26 @@ public class CoordinateExtractor {
 
     }
 
+    public HashMap<String,Double>  findLips() throws JSONException {
+        HashMap<String, Double> lipsMap = getLips();
+        HashMap<String, Double> noseMap = getNose();
+
+        //lip top^M
+        Double lipTopX = lipsMap.get("lipLineMiddleX");
+        Double lipTopY = (noseMap.get("noseTipY") + lipsMap.get("lipLineMiddleY")) / 2;
+
+        //lip bottom^M
+        Double lipBottomX = lipsMap.get("lipLineMiddleX");
+        Double lipBottomY = 2 * (lipsMap.get("lipLineMiddleY")) - (lipTopY);
+
+        lipsMap.put("lipTopX", lipTopX);
+        lipsMap.put("lipTopY", lipTopY);
+        lipsMap.put("lipBottomX", lipBottomX);
+        lipsMap.put("lipBottomY", lipBottomY);
+
+        return lipsMap;
+    }
+
     public HashMap getWidthandHeight() throws JSONException {
 
         JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
