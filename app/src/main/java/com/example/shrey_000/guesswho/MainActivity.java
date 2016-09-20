@@ -32,10 +32,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        View view = findViewById(R.id.imageView);
         cv = (CanvasView) findViewById(R.id.canvas);
-        HTTPUtility poster = new HTTPUtility(cv);
+        HTTPUtility poster = new HTTPUtility(cv,view);
         poster.execute();
+        //cv.clearCanvas();
 
+
+//        if(view==null) {
+//            Log.d("view @main","true");
+//        }
+//        else{
+//            Log.d("view @main","false"); //view is not null !!! yayyy!
+//        }
     }
 
 

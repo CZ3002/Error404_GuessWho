@@ -147,6 +147,21 @@ public class CoordinateExtractor {
 
     }
 
+    public HashMap getWidthandHeight() throws JSONException {
+
+        JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
+
+        HashMap<String,Double> dimensionsMap=new HashMap<String,Double>();
+
+        Double width = imagesObj.getDouble("width");
+        Double height = imagesObj.getDouble("height");
+        dimensionsMap.put("width",width);
+        dimensionsMap.put("height",height);
+
+        //Log.d("eyes map",eyesMap.toString());
+        return dimensionsMap;
+
+    }
 
 
 

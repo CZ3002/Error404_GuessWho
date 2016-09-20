@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,9 +28,11 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     public static final String APP_KEY = "0962a5979fb26c22e46bcdfea31fc4e4";
 
     private CanvasView canvasView;
+    private View view;
 
-    public HTTPUtility(CanvasView canvasView){
+    public HTTPUtility(CanvasView canvasView, View view){
         this.canvasView = canvasView;
+        this.view=view;
     }
 
 
@@ -47,10 +50,12 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     protected void onPostExecute(JSONObject responseObj) {
 
         try {
-            canvasView.getMaps(responseObj);
+            canvasView.getMaps(responseObj,view);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+       // view.invalidate();
     }
 
 
