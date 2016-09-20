@@ -3,7 +3,6 @@ package com.example.shrey_000.guesswho;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -50,7 +49,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     protected void onPostExecute(JSONObject responseObj) {
 
         try {
-            canvasView.getMaps(responseObj,view);
+            canvasView.renderShapes(responseObj,view);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -64,8 +63,8 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     {
         HttpURLConnection connection = null;
 
-        String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
-
+//        String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
+        String urlParam = "{\n    \"image\":\" https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAJJAAAAJDI2OTUxOTk5LWU1M2ItNDk4YS04Y2IzLTlkYTA4MzhlM2Y3OA.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
         try {
             //Create connection
             URL url = new URL(API_URL);

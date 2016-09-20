@@ -147,6 +147,22 @@ public class CoordinateExtractor {
 
     }
 
+
+    public HashMap<String,Double>  findNose() throws JSONException {
+        HashMap<String, Double> lipsMap = findLips();
+        HashMap<String, Double> noseMap = getNose();
+
+        //Double noseBottomX=(noseMap.get("nostrilLeftSideX")+noseMap.get("nostrilRightSideX"))/2;
+        Double noseBottomX=lipsMap.get("lipTopX");
+        Double noseBottomY=(lipsMap.get("lipLineMiddleY")+noseMap.get("noseTipY"))/2;
+       // Double noseBottomY=(lipsMap.get("lipTopY")+noseMap.get("noseTipY"))/2;
+
+        noseMap.put("noseBottomX",noseBottomX);
+        noseMap.put("noseBottomY",noseBottomY);
+        return noseMap;
+    }
+
+
     public HashMap<String,Double>  findLips() throws JSONException {
         HashMap<String, Double> lipsMap = getLips();
         HashMap<String, Double> noseMap = getNose();

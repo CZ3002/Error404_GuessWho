@@ -35,29 +35,63 @@ public class CanvasView extends View
 
     }
 
-    public void getMaps(JSONObject responseObj, View view) throws JSONException {
+    public void renderShapes(JSONObject responseObj, View view) throws JSONException {
         ce = new CoordinateExtractor(responseObj);
         this.view=view;
         setShapes();
+        invalidate();
     }
 
     public boolean setShapes() throws JSONException {
 
         if(ce==null)
             return false;
-//        View view = new View(context);
-//        view=findViewById(R.id.imageView);
-        if(view==null){
-            Log.d("view null","null");
-           return false;
-        }
-        else
-        Log.d("view is not null","");
 
-        //---------------changed--------------------------------------
+//        HashMap<String,Double> dimensions = ce.getWidthandHeight();
+//
+//
+//        float width = Float.valueOf(dimensions.get("width").toString());
+//        float height = Float.valueOf(dimensions.get("height").toString());
 
+//        widthRatio = view.getWidth()/width;
+//        heightRatio = view.getHeight()/height;
+
+        setEyes();
+        setNose();
+        setLips();
+
+        //invalidate();
+        return true;
+
+
+    }
+
+
+    public HashMap scaleCoordinates(HashMap<String, Double> map, float ratio) throws JSONException {
         HashMap<String,Double> dimensions = ce.getWidthandHeight();
 
+        Double widthKairos = dimensions.get("width");
+        Double heightKairos = dimensions.get("height");
+
+        for(String key : map.keySet()){
+            double newCoordinate;
+            if(key.charAt(key.length()-1) == 'X'){
+                newCoordinate = (map.get(key))*ratio + (view.getWidth()/2) - widthKairos*ratio/2;
+            }
+            else{
+                newCoordinate = (map.get(key))*ratio + (view.getHeight()/2) - heightKairos*ratio/2;
+            }
+            map.put(key,newCoordinate);
+        }
+
+        return map;
+
+    }
+
+    public float getRatio() throws JSONException {
+        float ratio;
+
+        HashMap<String,Double> dimensions = ce.getWidthandHeight();
 
         float width = Float.valueOf(dimensions.get("width").toString());
         float height = Float.valueOf(dimensions.get("height").toString());
@@ -65,13 +99,26 @@ public class CanvasView extends View
         float widthRatio = view.getWidth()/width;
         float heightRatio = view.getHeight()/height;
 
-        //----------------------------------------------------------------
+        if(widthRatio > heightRatio) {
+            ratio = heightRatio;
+        }
+        else {
+            ratio = widthRatio;
+        }
 
-        HashMap<String, Double> eyesMap=new HashMap<String,Double>();
-        eyesMap=ce.findEyes();
-        Log.d("eyesMap is",""+eyesMap);
+        return ratio;
+    }
 
-//
+
+    public void setEyes() throws JSONException {
+        float ratio = getRatio();
+
+        HashMap<String, Double> map=new HashMap<String,Double>();
+        map=ce.findEyes();
+        HashMap<String,Double> eyesMap=scaleCoordinates(map, ratio);
+
+       // Log.d("eyesMap is",""+eyesMap);
+
 
 
         float leftEyeCornerLeftX,leftEyeCornerLeftY,leftEyeTopX,leftEyeTopY,leftEyeCornerRightX,leftEyeCornerRightY,leftEyeBottomX,leftEyeBottomY,
@@ -94,12 +141,12 @@ public class CanvasView extends View
         rightEyeBottomX=Float.valueOf(eyesMap.get("rightEyeBottomX").toString());
         rightEyeBottomY=Float.valueOf(eyesMap.get("rightEyeBottomY").toString());
 //
-        fillPath.moveTo(leftEyeCornerLeftX * widthRatio, leftEyeCornerLeftY * heightRatio); // Your origin point
-        fillPath.lineTo(leftEyeTopX * widthRatio, leftEyeTopY * heightRatio); // First point
+        fillPath.moveTo(leftEyeCornerLeftX , leftEyeCornerLeftY ); // Your origin point
+        fillPath.lineTo(leftEyeTopX , leftEyeTopY); // First point
         // Repeat above line for all points on your line graph
-        fillPath.lineTo(leftEyeCornerRightX * widthRatio, leftEyeCornerRightY * heightRatio); // Final point
-        fillPath.lineTo(leftEyeBottomX * widthRatio, leftEyeBottomY * heightRatio); // Draw from final point to the axis ++
-        fillPath.lineTo(leftEyeCornerLeftX * widthRatio, leftEyeCornerLeftY * heightRatio); // Same origin point
+        fillPath.lineTo(leftEyeCornerRightX , leftEyeCornerRightY ); // Final point
+        fillPath.lineTo(leftEyeBottomX , leftEyeBottomY ); // Draw from final point to the axis ++
+        fillPath.lineTo(leftEyeCornerLeftX , leftEyeCornerLeftY ); // Same origin point
 
         fillPath.moveTo(rightEyeCornerLeftX, rightEyeCornerLeftY); // Your origin point
         fillPath.lineTo(rightEyeTopX, rightEyeTopY); // First point
@@ -108,35 +155,84 @@ public class CanvasView extends View
         fillPath.lineTo(rightEyeBottomX, rightEyeBottomY); // Draw from final point to the axis ++
         fillPath.lineTo(rightEyeCornerLeftX, rightEyeCornerLeftY);
 
-        invalidate();
-        return true;
-
 
     }
 
-    ////////////////////////////// rel position////////////////////////////////////
 
-//    private float getRelativeLeft(View myView) throws JSONException {
-//        HashMap<String, Double> eyesMap=new HashMap<String,Double>();
-//        eyesMap=ce.findEyes();
-//        float leftEyeCenterX = Float.valueOf(eyesMap.get("leftEyeCenterX").toString());
+    public void setNose() throws JSONException {
+        float ratio = getRatio();
+
+        HashMap<String, Double> map=new HashMap<String,Double>();
+        map=ce.findNose();
+        HashMap<String,Double> noseMap=scaleCoordinates(map, ratio);
+
+
+
+
+
+        //Log.d("eyesMap is",""+eyesMap);
+
+        float noseTipX,noseTipY,noseBtwEyesX,noseBtwEyesY,
+        nostrilLeftSideX,nostrilLeftSideY,nostrilRightSideX,nostrilRightSideY,noseBottomX,noseBottomY;
+        noseTipX=Float.valueOf(noseMap.get("noseTipX").toString());
+        noseTipY=Float.valueOf(noseMap.get("noseTipY").toString());
+        noseBtwEyesX=Float.valueOf(noseMap.get("noseBtwEyesX").toString());
+        noseBtwEyesY=Float.valueOf(noseMap.get("noseBtwEyesY").toString());
+
+        nostrilLeftSideX=Float.valueOf(noseMap.get("nostrilLeftSideX").toString());
+        nostrilLeftSideY=Float.valueOf(noseMap.get("nostrilLeftSideY").toString());
+        nostrilRightSideX=Float.valueOf(noseMap.get("nostrilRightSideX").toString());
+        nostrilRightSideY=Float.valueOf(noseMap.get("nostrilRightSideY").toString());
+
+        noseBottomX=Float.valueOf(noseMap.get("noseBottomX").toString());
+        noseBottomY=Float.valueOf(noseMap.get("noseBottomY").toString());
+
 //
-//        if (myView.getParent() == myView.getRootView())
-//            return leftEyeCenterX + myView.getLeft();
-//        else
-//            return  myView.getLeft() + getRelativeLeft((View) myView.getParent());
-//    }
+        fillPath.moveTo(noseBtwEyesX , noseBtwEyesY ); // Your origin point
+        fillPath.lineTo(nostrilLeftSideX , nostrilLeftSideY ); // First point
+        // Repeat above line for all points on your line graph
+        fillPath.lineTo(noseBottomX , noseBottomY ); // Final point
+        fillPath.lineTo(nostrilRightSideX , nostrilRightSideY ); // Draw from final point to the axis ++
+        fillPath.lineTo(noseBtwEyesX , noseBtwEyesY ); // Same origin point
+
+    }
+
+
+
+    public void setLips() throws JSONException {
+        float ratio = getRatio();
+
+        HashMap<String, Double> map=new HashMap<String,Double>();
+        map=ce.findLips();
+        HashMap<String,Double> lipsMap=scaleCoordinates(map, ratio);
+
+
+        //Log.d("eyesMap is",""+eyesMap);
+
+        float lipTopX,lipTopY,lipBottomX,lipBottomY,lipCornerLeftX,lipCornerLeftY,lipCornerRightX,lipCornerRightY;
+        lipTopX=Float.valueOf(lipsMap.get("lipTopX").toString());
+        lipTopY=Float.valueOf(lipsMap.get("lipTopY").toString());
+        lipBottomX=Float.valueOf(lipsMap.get("lipBottomX").toString());
+        lipBottomY=Float.valueOf(lipsMap.get("lipBottomY").toString());
+
+        lipCornerLeftX=Float.valueOf(lipsMap.get("lipCornerLeftX").toString());
+        lipCornerLeftY=Float.valueOf(lipsMap.get("lipCornerLeftY").toString());
+        lipCornerRightX=Float.valueOf(lipsMap.get("lipCornerRightX").toString());
+        lipCornerRightY=Float.valueOf(lipsMap.get("lipCornerRightY").toString());
+
+
 //
-//    private float getRelativeTop(View myView) throws JSONException {
-//        HashMap<String, Double> eyesMap=new HashMap<String,Double>();
-//        eyesMap=ce.findEyes();
-//        float leftEyeCenterY = Float.valueOf(eyesMap.get("leftEyeCenterY").toString());
-//        if (myView.getParent() == myView.getRootView())
-//            return leftEyeCenterY + myView.getTop();
-//        else
-//            return myView.getTop() + getRelativeTop((View) myView.getParent());
-//    }
-    //////////////////////////////////////////////////////////////////////////////
+        fillPath.moveTo(lipTopX , lipTopY ); // Your origin point
+        fillPath.lineTo(lipCornerLeftX , lipCornerLeftY ); // First point
+        // Repeat above line for all points on your line graph
+        fillPath.lineTo(lipBottomX , lipBottomY ); // Final point
+        fillPath.lineTo(lipCornerRightX , lipCornerRightY ); // Draw from final point to the axis ++
+        fillPath.lineTo(lipTopX , lipTopY ); // Same origin point
+
+    }
+
+
+
 
     // override onDraw
     @Override
@@ -149,26 +245,11 @@ public class CanvasView extends View
 //        int color = bitmap.getPixel(766, 1122);
 
         Paint paint=new Paint();
-        paint.setColor(Color.argb(100,245,255,250));
-        //paint.setAlpha(175);
+        //paint.setColor(Color.argb(255,245,255,250));
+        paint.setColor(Color.BLACK);
+        paint.setAlpha(200);
         paint.setStyle(Paint.Style.FILL);
 
-       // paint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
-
-//        fillPath.moveTo(0, 0); // Your origin point
-//        fillPath.lineTo(800, 0); // First point
-//        // Repeat above line for all points on your line graph
-//        fillPath.lineTo(800, 800); // Final point
-//        fillPath.lineTo(0, 800); // Draw from final point to the axis ++
-//        fillPath.lineTo(0, 0); // Same origin point
-
-
-//        try {
-//            if(!setShapes())
-//                return;
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         canvas.drawPath(fillPath, paint);
     }
 
