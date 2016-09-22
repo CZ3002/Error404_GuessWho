@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         cv = (CanvasView) findViewById(R.id.canvas);
         HTTPUtility poster = new HTTPUtility(cv,view);
         poster.execute();
+
+
         //cv.clearCanvas();
 
 
@@ -83,6 +86,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void revealEyes(View view)
+    {
+        Path eyesPath=cv.getEyesPath();
+        eyesPath.reset();
+        cv.invalidate();
+    }
+    public void revealNose(View view)
+    {
+
+        Path nosePath=cv.getNosePath();
+        nosePath.reset();
+        cv.invalidate();
+    }
+    public void revealLips(View view)
+    {
+        Path lipsPath=cv.getLipsPath();
+        lipsPath.reset();
+        cv.invalidate();
     }
 
 

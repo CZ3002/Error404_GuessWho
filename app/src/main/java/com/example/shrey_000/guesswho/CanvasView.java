@@ -24,14 +24,16 @@ import static com.example.shrey_000.guesswho.R.*;
 public class CanvasView extends View
 {
     Context context;
-    Path fillPath;
+//    Path fillPath;
     CoordinateExtractor ce;
     View view;
+    HashMap<String, Path> pathMap;
 
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
         context = c;
-        fillPath = new Path();
+//        fillPath = new Path();
+        pathMap = new HashMap<>();
 
     }
 
@@ -140,20 +142,29 @@ public class CanvasView extends View
         rightEyeCornerRightY=Float.valueOf(eyesMap.get("rightEyeCornerRightY").toString());
         rightEyeBottomX=Float.valueOf(eyesMap.get("rightEyeBottomX").toString());
         rightEyeBottomY=Float.valueOf(eyesMap.get("rightEyeBottomY").toString());
-//
-        fillPath.moveTo(leftEyeCornerLeftX , leftEyeCornerLeftY ); // Your origin point
-        fillPath.lineTo(leftEyeTopX , leftEyeTopY); // First point
-        // Repeat above line for all points on your line graph
-        fillPath.lineTo(leftEyeCornerRightX , leftEyeCornerRightY ); // Final point
-        fillPath.lineTo(leftEyeBottomX , leftEyeBottomY ); // Draw from final point to the axis ++
-        fillPath.lineTo(leftEyeCornerLeftX , leftEyeCornerLeftY ); // Same origin point
 
-        fillPath.moveTo(rightEyeCornerLeftX, rightEyeCornerLeftY); // Your origin point
-        fillPath.lineTo(rightEyeTopX, rightEyeTopY); // First point
+        Path eyesPath = new Path();
+//
+        eyesPath.moveTo(leftEyeCornerLeftX , leftEyeCornerLeftY ); // Your origin point
+        eyesPath.lineTo(leftEyeTopX , leftEyeTopY); // First point
         // Repeat above line for all points on your line graph
-        fillPath.lineTo(rightEyeCornerRightX, rightEyeCornerRightY); // Final point
-        fillPath.lineTo(rightEyeBottomX, rightEyeBottomY); // Draw from final point to the axis ++
-        fillPath.lineTo(rightEyeCornerLeftX, rightEyeCornerLeftY);
+        eyesPath.lineTo(leftEyeCornerRightX , leftEyeCornerRightY ); // Final point
+        eyesPath.lineTo(leftEyeBottomX , leftEyeBottomY ); // Draw from final point to the axis ++
+        eyesPath.lineTo(leftEyeCornerLeftX , leftEyeCornerLeftY ); // Same origin point
+
+        eyesPath.moveTo(rightEyeCornerLeftX, rightEyeCornerLeftY); // Your origin point
+        eyesPath.lineTo(rightEyeTopX, rightEyeTopY); // First point
+        // Repeat above line for all points on your line graph
+        eyesPath.lineTo(rightEyeCornerRightX, rightEyeCornerRightY); // Final point
+        eyesPath.lineTo(rightEyeBottomX, rightEyeBottomY); // Draw from final point to the axis ++
+        eyesPath.lineTo(rightEyeCornerLeftX, rightEyeCornerLeftY);
+
+        pathMap.put("eyesPath", eyesPath);
+//
+//        Log.d("eyes printed remove now","");
+//
+//        eyePath.reset();
+//        Log.d("eyes removed","");
 
 
     }
@@ -188,12 +199,15 @@ public class CanvasView extends View
         noseBottomY=Float.valueOf(noseMap.get("noseBottomY").toString());
 
 //
-        fillPath.moveTo(noseBtwEyesX , noseBtwEyesY ); // Your origin point
-        fillPath.lineTo(nostrilLeftSideX , nostrilLeftSideY ); // First point
+        Path nosePath = new Path();
+        nosePath.moveTo(noseBtwEyesX , noseBtwEyesY ); // Your origin point
+        nosePath.lineTo(nostrilLeftSideX , nostrilLeftSideY ); // First point
         // Repeat above line for all points on your line graph
-        fillPath.lineTo(noseBottomX , noseBottomY ); // Final point
-        fillPath.lineTo(nostrilRightSideX , nostrilRightSideY ); // Draw from final point to the axis ++
-        fillPath.lineTo(noseBtwEyesX , noseBtwEyesY ); // Same origin point
+        nosePath.lineTo(noseBottomX , noseBottomY ); // Final point
+        nosePath.lineTo(nostrilRightSideX , nostrilRightSideY ); // Draw from final point to the axis ++
+        nosePath.lineTo(noseBtwEyesX , noseBtwEyesY ); // Same origin point
+
+        pathMap.put("nosePath",nosePath);
 
     }
 
@@ -222,12 +236,16 @@ public class CanvasView extends View
 
 
 //
-        fillPath.moveTo(lipTopX , lipTopY ); // Your origin point
-        fillPath.lineTo(lipCornerLeftX , lipCornerLeftY ); // First point
+        Path lipsPath = new Path();
+
+        lipsPath.moveTo(lipTopX , lipTopY ); // Your origin point
+        lipsPath.lineTo(lipCornerLeftX , lipCornerLeftY ); // First point
         // Repeat above line for all points on your line graph
-        fillPath.lineTo(lipBottomX , lipBottomY ); // Final point
-        fillPath.lineTo(lipCornerRightX , lipCornerRightY ); // Draw from final point to the axis ++
-        fillPath.lineTo(lipTopX , lipTopY ); // Same origin point
+        lipsPath.lineTo(lipBottomX , lipBottomY ); // Final point
+        lipsPath.lineTo(lipCornerRightX , lipCornerRightY ); // Draw from final point to the axis ++
+        lipsPath.lineTo(lipTopX , lipTopY ); // Same origin point
+
+        pathMap.put("lipsPath",lipsPath);
 
     }
 
@@ -250,9 +268,26 @@ public class CanvasView extends View
         paint.setAlpha(200);
         paint.setStyle(Paint.Style.FILL);
 
-        canvas.drawPath(fillPath, paint);
+        for(Path path:pathMap.values()){
+            canvas.drawPath(path, paint);
+        }
     }
 
+
+
+    public Path getEyesPath()
+    {
+        return pathMap.get("eyesPath");
+    }
+
+    public Path getNosePath()
+    {
+        return pathMap.get("nosePath");
+    }
+    public Path getLipsPath()
+    {
+        return pathMap.get("lipsPath");
+    }
 
 
     public void clearCanvas() {
