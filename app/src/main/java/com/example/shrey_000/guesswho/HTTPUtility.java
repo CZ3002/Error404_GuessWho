@@ -5,12 +5,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,10 +37,12 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
     private CanvasView canvasView;
     private View view;
+    private BitmapDrawable bd;
 
     public HTTPUtility(CanvasView canvasView, View view){
         this.canvasView = canvasView;
         this.view=view;
+
     }
 
 
@@ -59,6 +65,8 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     protected void onPostExecute(JSONObject responseObj) {
 
         try {
+            ImageView iv = (ImageView)view;
+            iv.setImageDrawable(bd);
             canvasView.renderShapes(responseObj,view);
 
         } catch (JSONException e) {
@@ -75,14 +83,17 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
         Bitmap bm;
 
-        connectionDB = (HttpURLConnection) new URL("http://10.27.193.98/guesswho/nar.jpg").openConnection();
+        connectionDB = (HttpURLConnection) new URL("http://10.27.193.98/guesswho/kat.jpg").openConnection();
         connectionDB.connect();
         InputStream input = connectionDB.getInputStream();
         if(input==null)
             Log.d("input null","");
 
         bm = BitmapFactory.decodeStream(input);
-        //return new BitmapDrawable(x);
+
+
+
+        bd = new BitmapDrawable(null,bm);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object

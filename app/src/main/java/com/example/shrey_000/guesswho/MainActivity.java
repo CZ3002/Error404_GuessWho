@@ -1,11 +1,15 @@
 package com.example.shrey_000.guesswho;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +22,7 @@ import java.net.URL;
 
 import android.util.*;
 import android.view.View;
+import android.widget.ImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,26 +35,21 @@ public class MainActivity extends AppCompatActivity {
     private CanvasView cv;
     private CoordinateExtractor ce;
     private ScoreCalculator scoreCalc;
+//    private Drawable drawable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        scoreCalc = new ScoreCalculator();
         View view = findViewById(R.id.imageView);
+
+
+        scoreCalc = new ScoreCalculator();
+
         cv = (CanvasView) findViewById(R.id.canvas);
+
         HTTPUtility poster = new HTTPUtility(cv,view);
         poster.execute();
 
-
-        //cv.clearCanvas();
-
-
-//        if(view==null) {
-//            Log.d("view @main","true");
-//        }
-//        else{
-//            Log.d("view @main","false"); //view is not null !!! yayyy!
-//        }
     }
 
 
