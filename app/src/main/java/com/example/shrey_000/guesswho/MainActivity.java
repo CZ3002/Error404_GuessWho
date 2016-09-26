@@ -29,10 +29,12 @@ import java.io.*;
 public class MainActivity extends AppCompatActivity {
     private CanvasView cv;
     private CoordinateExtractor ce;
+    private ScoreCalculator scoreCalc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        scoreCalc = new ScoreCalculator();
         View view = findViewById(R.id.imageView);
         cv = (CanvasView) findViewById(R.id.canvas);
         HTTPUtility poster = new HTTPUtility(cv,view);
@@ -91,21 +93,31 @@ public class MainActivity extends AppCompatActivity {
     public void revealEyes(View view)
     {
         Path eyesPath=cv.getEyesPath();
+        if(!eyesPath.isEmpty())
+            scoreCalc.incrementFeaturesRevealed();
         eyesPath.reset();
         cv.invalidate();
+        scoreCalc.calculateScore();
+
     }
     public void revealNose(View view)
     {
 
         Path nosePath=cv.getNosePath();
+        if(!nosePath.isEmpty())
+            scoreCalc.incrementFeaturesRevealed();
         nosePath.reset();
         cv.invalidate();
+        scoreCalc.calculateScore();
     }
     public void revealLips(View view)
     {
         Path lipsPath=cv.getLipsPath();
+        if(!lipsPath.isEmpty())
+            scoreCalc.incrementFeaturesRevealed();
         lipsPath.reset();
         cv.invalidate();
+        scoreCalc.calculateScore();
     }
 
 
