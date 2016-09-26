@@ -1,9 +1,14 @@
 package com.example.shrey_000.guesswho;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
@@ -36,7 +41,12 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
 
     protected JSONObject doInBackground(Void... nothing) {
-        String responseStr = executePost();
+        String responseStr = null;
+        try {
+            responseStr = executePost();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try {
             return JSONProcessing(responseStr);
         } catch (JSONException e) {
@@ -59,35 +69,55 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
 
 
-    public String executePost()
-    {
-        HttpURLConnection connection = null;
+    public String executePost() throws IOException {
+        HttpURLConnection connectionAPI = null;
+        HttpURLConnection connectionDB=null;
 
-//        String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
-        String urlParam = "{\n    \"image\":\" https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAJJAAAAJDI2OTUxOTk5LWU1M2ItNDk4YS04Y2IzLTlkYTA4MzhlM2Y3OA.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
+        Bitmap bm;
+
+        connectionDB = (HttpURLConnection) new URL("http://10.27.193.98/guesswho/nar.jpg").openConnection();
+        connectionDB.connect();
+        InputStream input = connectionDB.getInputStream();
+        if(input==null)
+            Log.d("input null","");
+
+        bm = BitmapFactory.decodeStream(input);
+        //return new BitmapDrawable(x);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+
+
+
+       String urlParam = "{\"image\":\"" + encodedImage + "\",\"selector\":\"SETPOSE\"\r\n}";
+//       String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
+
         try {
-            //Create connection
+            //Create connectionAPI
             URL url = new URL(API_URL);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
+            connectionAPI = (HttpURLConnection) url.openConnection();
+            connectionAPI.setRequestMethod("POST");
+            connectionAPI.setRequestProperty("Content-Type", "application/json");
 
-            connection.setRequestProperty("app_id",APP_ID);
-            connection.setRequestProperty("app_key",APP_KEY);
+            connectionAPI.setRequestProperty("app_id",APP_ID);
+            connectionAPI.setRequestProperty("app_key",APP_KEY);
 
-            connection.setRequestProperty("Content-Language", "en-US");
+            connectionAPI.setRequestProperty("Content-Language", "en-US");
 
-            connection.setUseCaches(false);
-            connection.setDoOutput(true);
+            connectionAPI.setUseCaches(false);
+            connectionAPI.setDoOutput(true);
 
             //Send request
             DataOutputStream wr = new DataOutputStream (
-                    connection.getOutputStream());
+                    connectionAPI.getOutputStream());
             wr.writeBytes(urlParam);
             wr.close();
 
             //Get Response
-            InputStream is = connection.getInputStream();
+            InputStream is = connectionAPI.getInputStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
             String line;
@@ -103,8 +133,8 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
             e.printStackTrace();
             return null;
         } finally {
-            if (connection != null) {
-                connection.disconnect();
+            if (connectionAPI != null) {
+                connectionAPI.disconnect();
             }
         }
     }
