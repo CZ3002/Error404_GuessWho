@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="285dp"
         android:id="@+id/rel">
 
         <ImageView
@@ -35,24 +35,24 @@
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Eyes"
             android:id="@+id/eyes"
             android:onClick="revealEyes" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Nose"
             android:id="@+id/nose"
             android:onClick="revealNose" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Lips"
             android:id="@+id/lips"
             android:onClick="revealLips" />

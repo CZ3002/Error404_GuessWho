@@ -52,6 +52,8 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
             responseStr = executePost();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         try {
             return JSONProcessing(responseStr);
@@ -77,19 +79,75 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
 
 
-    public String executePost() throws IOException {
+    public String executePost() throws IOException, JSONException {
         HttpURLConnection connectionAPI = null;
         HttpURLConnection connectionDB=null;
 
         Bitmap bm;
 
-        connectionDB = (HttpURLConnection) new URL("http://10.27.193.98/guesswho/kat.jpg").openConnection();
-        connectionDB.connect();
-        InputStream input = connectionDB.getInputStream();
-        if(input==null)
-            Log.d("input null","");
 
-        bm = BitmapFactory.decodeStream(input);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+//        connectionDB = (HttpURLConnection) new URL("http://192.168.0.15/CZ3002/images/kat.jpg").openConnection();
+//        connectionDB = (HttpURLConnection) new URL("http://192.168.0.15/CZ3002/android_connect/get_contact_details.php").openConnection();
+
+//        connectionDB.connect();
+//        InputStream input = connectionDB.getInputStream();
+//        if(input==null)
+//            Log.d("input null","");
+
+
+        String urlParam2 = "{\"username\":\"gupta\"}";
+
+        URL url2 = new URL("http://192.168.0.15/CZ3002/android_connect/get_contact_details.php?username=gupta");
+        connectionDB = (HttpURLConnection) url2.openConnection();
+        connectionDB.setRequestMethod("GET");
+        //connectionDB.setRequestProperty("Content-Type", "application/json");
+
+
+       // connectionDB.setRequestProperty("Content-Language", "en-US");
+
+        connectionDB.setUseCaches(false);
+        connectionDB.setDoOutput(true);
+        connectionDB.connect();
+
+        //Send request
+//        DataOutputStream wr2 = new DataOutputStream (
+//                connectionDB.getOutputStream());
+//        wr2.writeBytes(urlParam2);
+//        wr2.close();
+
+
+        //Get Response
+        InputStream is2 = connectionDB.getInputStream();
+        BufferedReader rd2 = new BufferedReader(new InputStreamReader(is2));
+        StringBuilder response2 = new StringBuilder(); // or StringBuffer if Java version 5+
+        String line2;
+        while ((line2 = rd2.readLine()) != null) {
+            response2.append(line2);
+            response2.append('\r');
+        }
+        rd2.close();
+        if(response2==null){
+            Log.d("response2 null","");
+        }
+        else
+            Log.d("response2 not null","");
+        Log.d("HTTP GET RESPONSE", response2.toString());
+
+        String responseDB = response2.toString(); //converting resp2 to string
+        Log.d("responseDB",""+responseDB);
+
+        JSONObject respObj = JSONProcessing(responseDB);
+        String base64 = respObj.getString("base64");
+        Log.d("base64",""+base64);
+
+        byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
+        bm = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//        bm = BitmapFactory.decodeStream(base64);
 
 
 
@@ -97,13 +155,13 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-        byte[] b = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+//        byte[] b = baos.toByteArray();
+//        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
 
 
 
 
-       String urlParam = "{\"image\":\"" + encodedImage + "\",\"selector\":\"SETPOSE\"\r\n}";
+       String urlParam = "{\"image\":\"" + base64 + "\",\"selector\":\"SETPOSE\"\r\n}";
 //       String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
 
         try {
