@@ -2,6 +2,7 @@ package com.example.shrey_000.guesswho;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,8 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     private CanvasView canvasView;
     private View view;
     private BitmapDrawable bd;
+    private HttpURLConnection connectionDB=null;
+    private HttpURLConnection connectionAPI = null;
 
     public HTTPUtility(CanvasView canvasView, View view){
         this.canvasView = canvasView;
@@ -49,7 +52,14 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     protected JSONObject doInBackground(Void... nothing) {
         String responseStr = null;
         try {
-            responseStr = executePost();
+           // responseStr = executePost();
+            int numRows=getNumRowsFromDB();
+            RandomGenerator rg=new RandomGenerator(numRows);
+            int rowIndex = rg.getRandomPhotoIndex();
+            String base64 = getContactDetails(rowIndex);
+            convertBase64ToDrawable(base64);
+            responseStr = getKairosResponse(base64);
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -74,94 +84,105 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       // view.invalidate();
     }
 
 
 
-    public String executePost() throws IOException, JSONException {
-        HttpURLConnection connectionAPI = null;
+    public JSONObject JSONProcessing(String responseText) throws JSONException {
+
+        JSONObject jobj = new JSONObject(responseText);
+        Log.d("JSON Object Type", ""+(jobj instanceof JSONObject));
+        Log.d("JSON Object", ""+jobj);
+        return jobj;
+
+      }
+
+
+
+
+    ////////////////////////////////// creating functions//////////////////////////////////////////
+
+
+    public int getNumRowsFromDB() throws IOException, JSONException {
         HttpURLConnection connectionDB=null;
 
-        Bitmap bm;
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-//        connectionDB = (HttpURLConnection) new URL("http://192.168.0.15/CZ3002/images/kat.jpg").openConnection();
-//        connectionDB = (HttpURLConnection) new URL("http://192.168.0.15/CZ3002/android_connect/get_contact_details.php").openConnection();
-
-//        connectionDB.connect();
-//        InputStream input = connectionDB.getInputStream();
-//        if(input==null)
-//            Log.d("input null","");
-
-
-        String urlParam2 = "{\"username\":\"gupta\"}";
-
-        URL url2 = new URL("http://192.168.0.15/CZ3002/android_connect/get_contact_details.php?username=gupta");
-        connectionDB = (HttpURLConnection) url2.openConnection();
+        URL urlGetNumRows = new URL("http://192.168.0.15/CZ3002/android_connect/get_num_rows.php");
+        connectionDB = (HttpURLConnection) urlGetNumRows.openConnection();
         connectionDB.setRequestMethod("GET");
-        //connectionDB.setRequestProperty("Content-Type", "application/json");
-
-
-       // connectionDB.setRequestProperty("Content-Language", "en-US");
 
         connectionDB.setUseCaches(false);
         connectionDB.setDoOutput(true);
         connectionDB.connect();
 
-        //Send request
-//        DataOutputStream wr2 = new DataOutputStream (
-//                connectionDB.getOutputStream());
-//        wr2.writeBytes(urlParam2);
-//        wr2.close();
+        //Get Response
+        InputStream is = connectionDB.getInputStream();
+        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+        StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+        String line;
+        while ((line = rd.readLine()) != null) {
+            response.append(line);
+            response.append('\r');
+        }
+        rd.close();
 
+        String responseNumRows = response.toString(); //converting resp2 to string
+        JSONObject numRowsObj = JSONProcessing(responseNumRows);
+        String numRowsStr = numRowsObj.getString("numRows");
+
+        return Integer.parseInt(numRowsStr);
+
+    }
+
+
+
+    public String getContactDetails(int contactID) throws IOException, JSONException {
+        String urlParam = "{\"username\":\"gupta\"}";
+
+        URL url = new URL("http://192.168.0.15/CZ3002/android_connect/get_contact_details.php?contactID=" + contactID);
+        connectionDB = (HttpURLConnection) url.openConnection();
+        connectionDB.setRequestMethod("GET");
+
+        connectionDB.setUseCaches(false);
+        connectionDB.setDoOutput(true);
+        connectionDB.connect();
 
         //Get Response
-        InputStream is2 = connectionDB.getInputStream();
-        BufferedReader rd2 = new BufferedReader(new InputStreamReader(is2));
-        StringBuilder response2 = new StringBuilder(); // or StringBuffer if Java version 5+
-        String line2;
-        while ((line2 = rd2.readLine()) != null) {
-            response2.append(line2);
-            response2.append('\r');
+        InputStream is = connectionDB.getInputStream();
+        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+        StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+        String line;
+        while ((line = rd.readLine()) != null) {
+            response.append(line);
+            response.append('\r');
         }
-        rd2.close();
-        if(response2==null){
-            Log.d("response2 null","");
-        }
-        else
-            Log.d("response2 not null","");
-        Log.d("HTTP GET RESPONSE", response2.toString());
+        rd.close();
 
-        String responseDB = response2.toString(); //converting resp2 to string
-        Log.d("responseDB",""+responseDB);
+        Log.d("HTTP GET RESPONSE", response.toString());
 
-        JSONObject respObj = JSONProcessing(responseDB);
+        String responseContactDetails = response.toString(); //converting resp2 to string
+
+        JSONObject respObj = JSONProcessing(responseContactDetails);
         String base64 = respObj.getString("base64");
-        Log.d("base64",""+base64);
 
+        return base64;
+    }
+
+
+    public void convertBase64ToDrawable(String base64)
+    {
+        Bitmap bm;
         byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
         bm = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//        bm = BitmapFactory.decodeStream(base64);
-
-
-
         bd = new BitmapDrawable(null,bm);
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-//        byte[] b = baos.toByteArray();
-//        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
 
+    }
 
-
-
-       String urlParam = "{\"image\":\"" + base64 + "\",\"selector\":\"SETPOSE\"\r\n}";
+    public String getKairosResponse(String base64)
+    {
+        String urlParam = "{\"image\":\"" + base64 + "\",\"selector\":\"SETPOSE\"\r\n}";
 //       String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
 
         try {
@@ -206,20 +227,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
                 connectionAPI.disconnect();
             }
         }
+
     }
-
-    public JSONObject JSONProcessing(String responseText) throws JSONException {
-
-        List<Float> valuesList = new ArrayList<Float>();
-
-
-        JSONObject jobj = new JSONObject(responseText);
-        Log.d("JSON Object Type", ""+(jobj instanceof JSONObject));
-        Log.d("JSON Object", ""+jobj);
-        return jobj;
-
-      }
-
-
 
     }
