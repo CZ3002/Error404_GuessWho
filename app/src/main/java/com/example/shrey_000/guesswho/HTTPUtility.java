@@ -41,7 +41,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     public static final String APP_ID = "3a4472cc";
     public static final String APP_KEY = "0962a5979fb26c22e46bcdfea31fc4e4";
 
-    public static final  String DBURL = "jdbc:mysql://10.27.201.184:3306/guesswho";
+    public static final  String DBURL = "jdbc:mysql://10.27.143.227:3306/guesswho";
     public static final  String USERNAME = "pma";
     public static final  String PASSWORD = "";
 
@@ -74,7 +74,6 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
             ArrayList<HashMap<String, String>> contacts = dbm.getPhotos("gupta");
             RandomGenerator rg = new RandomGenerator(contacts.size());
             int rowIndex = rg.getRandomPhotoIndex();
-
             String name = contacts.get(rowIndex).get("acqName");
             String base64 = contacts.get(rowIndex).get("base64");
 

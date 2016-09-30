@@ -19,7 +19,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import static com.example.shrey_000.guesswho.R.*;
+//import static com.example.shrey_000.guesswho.R.*;
 
 public class CanvasView extends View
 {

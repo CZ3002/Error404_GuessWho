@@ -1,6 +1,24 @@
 <resources>
+
     <string name="app_name">GuessWho</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- default model/voice -->
+    <string name="modelDefault">en-US_BroadbandModel</string>
+
+    <!-- STT credentials -->
+    <string name="STTUsername">&lt;username&gt;</string>
+    <string name="STTPassword">&lt;password&gt;</string>
+
+    <!-- TTS credentials -->
+    <string name="TTSUsername">&lt;username&gt;</string>
+    <string name="TTSPassword">&lt;password&gt;</string>
+
+    <!-- for credentials validation only -->
+    <string name="defaultUsername">&lt;username&gt;</string>
+    <string name="defaultPassword">&lt;password&gt;</string>
+
+    <string name="defaultTokenFactory">&lt;token-factory-url&gt;</string>
 </resources>

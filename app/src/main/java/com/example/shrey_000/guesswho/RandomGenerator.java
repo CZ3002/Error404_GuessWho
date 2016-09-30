@@ -1,5 +1,7 @@
 package com.example.shrey_000.guesswho;
 
+import android.util.Log;
+
 import java.util.Random;
 
 /**
