@@ -23,6 +23,7 @@ import java.net.URL;
 import android.util.*;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +47,9 @@ public class MainActivity extends AppCompatActivity {
         scoreCalc = new ScoreCalculator();
 
         cv = (CanvasView) findViewById(R.id.canvas);
+        RadioGroup options = (RadioGroup)findViewById(R.id.options);
 
-        HTTPUtility poster = new HTTPUtility(cv,view);
+        HTTPUtility poster = new HTTPUtility(cv,view,options);
         poster.execute();
 
     }

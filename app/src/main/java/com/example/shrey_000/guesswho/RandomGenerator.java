@@ -17,7 +17,7 @@ public class RandomGenerator {
     public int getRandomPhotoIndex()
     {
         Random r = new Random();
-        int i = r.nextInt(numRows) + 1;
+        int i = r.nextInt(numRows);
         return i;
     }
 }

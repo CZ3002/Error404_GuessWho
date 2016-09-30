@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import android.content.res.Resources;
@@ -16,6 +18,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Set;
 
 /**
  * Created by SHREY_000 on 9/2/2016.
@@ -36,36 +41,56 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     public static final String APP_ID = "3a4472cc";
     public static final String APP_KEY = "0962a5979fb26c22e46bcdfea31fc4e4";
 
+    public static final  String DBURL = "jdbc:mysql://10.27.201.184:3306/guesswho";
+    public static final  String USERNAME = "pma";
+    public static final  String PASSWORD = "";
+
     private CanvasView canvasView;
     private View view;
+
+
+    RadioGroup options;
+    LinkedHashSet<String> optionsList;
+
+
     private BitmapDrawable bd;
     private HttpURLConnection connectionDB=null;
     private HttpURLConnection connectionAPI = null;
+    private DBManager dbm;
 
-    public HTTPUtility(CanvasView canvasView, View view){
+    public HTTPUtility(CanvasView canvasView, View view, RadioGroup options){
         this.canvasView = canvasView;
         this.view=view;
+        this.options = options;
+        optionsList = new LinkedHashSet<>();
 
+        dbm = new DBManager(DBURL, USERNAME, PASSWORD);
     }
 
 
     protected JSONObject doInBackground(Void... nothing) {
         String responseStr = null;
         try {
-           // responseStr = executePost();
-            int numRows=getNumRowsFromDB();
-            RandomGenerator rg=new RandomGenerator(numRows);
+            ArrayList<HashMap<String, String>> contacts = dbm.getPhotos("gupta");
+            RandomGenerator rg = new RandomGenerator(contacts.size());
             int rowIndex = rg.getRandomPhotoIndex();
-            String base64 = getContactDetails(rowIndex);
+
+            String name = contacts.get(rowIndex).get("acqName");
+            String base64 = contacts.get(rowIndex).get("base64");
+
+            generateRandomOptions(name,rg,contacts);
+
+//            optionsList.add(name);
+//
+//            while(optionsList.size() < 4){
+//                int wrongOptIndex = rg.getRandomPhotoIndex();
+//                String wrongOpt = contacts.get(wrongOptIndex).get("acqName");
+//                optionsList.add(wrongOpt);
+//            }
+
             convertBase64ToDrawable(base64);
             responseStr = getKairosResponse(base64);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
             return JSONProcessing(responseStr);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,8 +106,23 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
             iv.setImageDrawable(bd);
             canvasView.renderShapes(responseObj,view);
 
+            Object[] optionsArray = optionsList.toArray();
+            for(int i = 0;i < 4;i++){
+                ((RadioButton)options.getChildAt(i)).setText((String)optionsArray[i]);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void generateRandomOptions(String name, RandomGenerator rg, ArrayList<HashMap<String, String>> contacts){
+        optionsList.add(name);
+
+        while(optionsList.size() < 4){
+            int wrongOptIndex = rg.getRandomPhotoIndex();
+            String wrongOpt = contacts.get(wrongOptIndex).get("acqName");
+            optionsList.add(wrongOpt);
         }
     }
 
@@ -94,79 +134,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         Log.d("JSON Object Type", ""+(jobj instanceof JSONObject));
         Log.d("JSON Object", ""+jobj);
         return jobj;
-
       }
-
-
-
-
-    ////////////////////////////////// creating functions//////////////////////////////////////////
-
-
-    public int getNumRowsFromDB() throws IOException, JSONException {
-        HttpURLConnection connectionDB=null;
-
-
-        URL urlGetNumRows = new URL("http://192.168.0.15/CZ3002/android_connect/get_num_rows.php");
-        connectionDB = (HttpURLConnection) urlGetNumRows.openConnection();
-        connectionDB.setRequestMethod("GET");
-
-        connectionDB.setUseCaches(false);
-        connectionDB.setDoOutput(true);
-        connectionDB.connect();
-
-        //Get Response
-        InputStream is = connectionDB.getInputStream();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-        StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-        String line;
-        while ((line = rd.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
-        }
-        rd.close();
-
-        String responseNumRows = response.toString(); //converting resp2 to string
-        JSONObject numRowsObj = JSONProcessing(responseNumRows);
-        String numRowsStr = numRowsObj.getString("numRows");
-
-        return Integer.parseInt(numRowsStr);
-
-    }
-
-
-
-    public String getContactDetails(int contactID) throws IOException, JSONException {
-        String urlParam = "{\"username\":\"gupta\"}";
-
-        URL url = new URL("http://192.168.0.15/CZ3002/android_connect/get_contact_details.php?contactID=" + contactID);
-        connectionDB = (HttpURLConnection) url.openConnection();
-        connectionDB.setRequestMethod("GET");
-
-        connectionDB.setUseCaches(false);
-        connectionDB.setDoOutput(true);
-        connectionDB.connect();
-
-        //Get Response
-        InputStream is = connectionDB.getInputStream();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-        StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-        String line;
-        while ((line = rd.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
-        }
-        rd.close();
-
-        Log.d("HTTP GET RESPONSE", response.toString());
-
-        String responseContactDetails = response.toString(); //converting resp2 to string
-
-        JSONObject respObj = JSONProcessing(responseContactDetails);
-        String base64 = respObj.getString("base64");
-
-        return base64;
-    }
 
 
     public void convertBase64ToDrawable(String base64)
@@ -183,7 +151,6 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     public String getKairosResponse(String base64)
     {
         String urlParam = "{\"image\":\"" + base64 + "\",\"selector\":\"SETPOSE\"\r\n}";
-//       String urlParam = "{\n    \"image\":\" http://media.kairos.com/kairos-elizabeth.jpg \",\n    \"selector\":\"SETPOSE\"\r\n}";
 
         try {
             //Create connectionAPI
@@ -209,7 +176,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
             //Get Response
             InputStream is = connectionAPI.getInputStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+            StringBuilder response = new StringBuilder();
             String line;
             while ((line = rd.readLine()) != null) {
                 response.append(line);

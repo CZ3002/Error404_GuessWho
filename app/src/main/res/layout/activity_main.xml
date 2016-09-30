@@ -23,10 +23,48 @@
         <com.example.shrey_000.guesswho.CanvasView
             android:id="@+id/canvas"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/options">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New RadioButton"
+                android:id="@+id/radioButton" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New RadioButton"
+                android:id="@+id/radioButton2" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New RadioButton"
+                android:id="@+id/radioButton3" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New RadioButton"
+                android:id="@+id/radioButton4" />
+        </RadioGroup>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
