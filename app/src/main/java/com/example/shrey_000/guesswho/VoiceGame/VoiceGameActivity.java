@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.concurrent.RunnableFuture;
 
 import android.app.FragmentTransaction;
@@ -51,18 +52,17 @@ import org.json.JSONObject;
 
 public class VoiceGameActivity extends AppCompatActivity {
 
+    private static String fileName = "";
+    private static TreeMap<String, Double[]> timeStampValues = new TreeMap<>();
+
     FragmentTabSTT fragmentTabSTT = new FragmentTabSTT();
-    // Media Recorder Instance
-    public static MediaRecorder audioRecorder;
-    // Path where the file is stored
-    public static String outputFile = null;
 
     public static class FragmentTabSTT extends Fragment implements ISpeechDelegate {
 
         private static final String STRING_ASKED = "I Suppose You Know Me. Let Us See If You Can Remember. " +
                 "Will you join us at dinner. Have a good night. See You in the Morning";
         private static final String[] REQUIRED_VALUES = new String[]{"i", "me", "let", "remember", "will", "dinner", "have", "night", "see", "morning"};
-        private HashMap<String, Double[]> timeStampValues = new HashMap<>();
+
 
         private enum ConnectionState {
             IDLE, CONNECTING, CONNECTED
@@ -100,11 +100,10 @@ public class VoiceGameActivity extends AppCompatActivity {
 
                     if (mState == ConnectionState.IDLE) {
                         mState = ConnectionState.CONNECTING;
-                        SpeechToText.sharedInstance().setModel(getString(R.string.modelDefault));
-                        // start media recorder here
-//                            audioRecorder.prepare();
-//                            audioRecorder.start();
 
+                        fileName += System.currentTimeMillis()/1000;
+
+                        SpeechToText.sharedInstance().setModel(getString(R.string.modelDefault));
                         // start recognition
                         new AsyncTask<Void, Void, Void>(){
                             @Override
@@ -120,9 +119,6 @@ public class VoiceGameActivity extends AppCompatActivity {
 
                         mState = ConnectionState.IDLE;
                         SpeechToText.sharedInstance().stopRecognition();
-//                        audioRecorder.stop();
-//                        audioRecorder.release();
-//                        audioRecorder = null;
                     }
                 }
             });
@@ -181,6 +177,7 @@ public class VoiceGameActivity extends AppCompatActivity {
                 public void run() {
                     ImageButton button = (ImageButton)mView.findViewById(buttonId);
                     if(colorVal.equals("blue")){
+                        button.setBackground(getResources().getDrawable(R.drawable.round_button_blue));
                         final Animation animation = new AlphaAnimation(1.0f, 0.5f); // Change alpha from fully visible to invisible
                         animation.setDuration(500); // duration - half a second
                         animation.setInterpolator(new LinearInterpolator()); // do not alter animation rate
@@ -189,9 +186,9 @@ public class VoiceGameActivity extends AppCompatActivity {
                         button.startAnimation(animation);
                     }
                     else{
+                        button.setBackground(getResources().getDrawable(R.drawable.round_button));
                         button.clearAnimation();
                     }
-//                    button.setBackground(getResources().getDrawable(R.drawable.round_button));
                 }
             };
             new Thread(){
@@ -221,7 +218,6 @@ public class VoiceGameActivity extends AppCompatActivity {
 
             try {
                 JSONObject jObj = new JSONObject(message);
-                //Log.d("thullu", message.toString());
                 // state message
                 if (jObj.has("results")) {
                     //if has result
@@ -282,19 +278,6 @@ public class VoiceGameActivity extends AppCompatActivity {
 
         //setContentView(R.layout.activity_home);
         setContentView(R.layout.activity_tab_text);
-
-        // Create a directory GuessWho to store audio recordings
-        File mediaStorage = new File(Environment.getExternalStorageDirectory(),"GuessWho");
-        if (!mediaStorage.exists()) {
-            mediaStorage.mkdirs();
-        }
-        outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording.3gp";
-
-        audioRecorder = new MediaRecorder();
-        audioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        audioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        audioRecorder.setOutputFile(outputFile);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentTabSTT).commit();
