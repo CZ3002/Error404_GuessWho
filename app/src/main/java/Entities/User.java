@@ -8,6 +8,7 @@ public class User {
     String name;
     String password;
     String contact;
+    String DOB;
 
     public User(String username, String name, String password, String contact) {
         this.username = username;
@@ -50,5 +51,13 @@ public class User {
 
     public void setContact(String contact) {
         this.contact = contact;
+    }
+
+    public String getDOB() {
+        return DOB;
+    }
+
+    public void setDOB(String DOB) {
+        this.DOB = DOB;
     }
 }

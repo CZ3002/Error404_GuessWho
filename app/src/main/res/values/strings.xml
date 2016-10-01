@@ -4,6 +4,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_play_games">PlayGames</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
 
     <!-- default model/voice -->
     <string name="modelDefault">en-US_BroadbandModel</string>
