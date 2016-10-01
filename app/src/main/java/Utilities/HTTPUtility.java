@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,12 +13,15 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.example.shrey_000.guesswho.FaceGame.CanvasView;
 import com.example.shrey_000.guesswho.FaceGame.FaceGameActivity;
+import com.example.shrey_000.guesswho.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +47,6 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
     Context context;
 
-
-    RadioGroup options;
     LinkedHashSet<String> optionsList;
     String name;
 
@@ -54,10 +56,9 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     private HttpURLConnection connectionAPI = null;
     private DataStoreManager dbm;
 
-    public HTTPUtility(CanvasView canvasView, View view, RadioGroup options, Context context){
+    public HTTPUtility(CanvasView canvasView, View view, Context context){
         this.canvasView = canvasView;
         this.view=view;
-        this.options = options;
         optionsList = new LinkedHashSet<>();
 
         this.context = context;
@@ -79,14 +80,6 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
             generateRandomOptions(name,rg,contacts);
 
-//            optionsList.add(name);
-//
-//            while(optionsList.size() < 4){
-//                int wrongOptIndex = rg.getRandomPhotoIndex();
-//                String wrongOpt = contacts.get(wrongOptIndex).get("acqName");
-//                optionsList.add(wrongOpt);
-//            }
-
             convertBase64ToDrawable(base64);
             responseStr = getKairosResponse(base64);
 
@@ -105,13 +98,21 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
             iv.setImageDrawable(bd);
             canvasView.renderShapes(responseObj,view);
 
-            options.setVisibility(View.VISIBLE);
+//            options.setVisibility(View.VISIBLE);
 
             Object[] optionsArray = optionsList.toArray();
             RandomGenerator rg = new RandomGenerator(4);
             String[] shuffledOptions = rg.randomizeOptionOrder(optionsArray);
+
+            Button choice1 = (Button)((FaceGameActivity)context).getWindow().getDecorView().findViewById(R.id.choice1);
+            Button choice2 = (Button)((FaceGameActivity)context).getWindow().getDecorView().findViewById(R.id.choice2);
+            Button choice3 = (Button)((FaceGameActivity)context).getWindow().getDecorView().findViewById(R.id.choice3);
+            Button choice4 = (Button)((FaceGameActivity)context).getWindow().getDecorView().findViewById(R.id.choice4);
+            Button[] choices = new Button[]{choice1,choice2,choice3,choice4};
+
             for(int i = 0;i < 4;i++){
-                ((RadioButton)options.getChildAt(i)).setText(shuffledOptions[i]);
+                choices[i].setVisibility(View.VISIBLE);
+                choices[i].setText(shuffledOptions[i]);
             }
 
             ((FaceGameActivity)context).setCorrectAns(name);
@@ -149,9 +150,6 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
         bm = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         bd = new BitmapDrawable(null,bm);
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-
     }
 
     public String getKairosResponse(String base64)

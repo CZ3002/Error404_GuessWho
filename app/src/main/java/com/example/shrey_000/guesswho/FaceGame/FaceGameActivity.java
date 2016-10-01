@@ -2,6 +2,7 @@ package com.example.shrey_000.guesswho.FaceGame;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.shrey_000.guesswho.R;
@@ -28,14 +28,19 @@ public class FaceGameActivity extends AppCompatActivity{
     private CanvasView cv;
     private CoordinateExtractor ce;
     private ScoreCalculatorFaceGame scoreCalc;
-    String correctAns = new String();
-//    private Drawable drawable;
+    private String correctAns = new String();
+    private String selectedAns = new String();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_game);
 
-        findViewById(R.id.options).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
+
         View view = findViewById(R.id.imageView);
 
         Intent intent = getIntent();
@@ -47,9 +52,8 @@ public class FaceGameActivity extends AppCompatActivity{
         updateScoreView(scoreCalc.getScoreTotal());
 
         cv = (CanvasView) findViewById(R.id.canvas);
-        RadioGroup options = (RadioGroup)findViewById(R.id.options);
 
-        HTTPUtility poster = new HTTPUtility(cv,view,options,this);
+        HTTPUtility poster = new HTTPUtility(cv,view,this);
         poster.execute();
     }
 
@@ -121,11 +125,40 @@ public class FaceGameActivity extends AppCompatActivity{
         cv.invalidate();
     }
 
-    public void goToNext(View view){
-        RadioGroup rg = (RadioGroup)findViewById(R.id.options);
-        String selectedAnswer = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
-        checkAnswer(selectedAnswer);
+    public void onChoice1(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice2)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
+    }
 
+    public void onChoice2(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice1)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    public void onChoice3(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice1)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice2)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    public void onChoice4(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice1)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice2)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    public void goToNext(View view){
+        checkAnswer();
     }
 
 //    public void goToMain(View view){
@@ -136,9 +169,9 @@ public class FaceGameActivity extends AppCompatActivity{
 //        startActivity(intentMain);
 //    }
 
-    private void checkAnswer(String selectedAnswer) {
+    private void checkAnswer() {
         String message;
-        if(correctAns.equals(selectedAnswer)) {
+        if(correctAns.equals(selectedAns)) {
             message = "Correct Answer.";
             scoreCalc.resetForNextQuestion(true);
         }
