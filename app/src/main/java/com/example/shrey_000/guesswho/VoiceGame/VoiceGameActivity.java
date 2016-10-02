@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,6 +25,7 @@ import com.example.shrey_000.guesswho.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -51,7 +53,7 @@ public class VoiceGameActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_face_game);
+        setContentView(R.layout.activity_voice_game);
 
         mHandler = new Handler();
         playedNum = 0;
@@ -75,7 +77,12 @@ public class VoiceGameActivity extends AppCompatActivity{
 
         correctAns = questionAndAnswer.get("answer");
 
-        options[random.nextInt(3)] = correctAns;
+        if(!Arrays.asList(options).contains(correctAns))
+            options[random.nextInt(3)] = correctAns;
+
+        Log.d("pollo", questionAndAnswer.get("answer"));
+        Log.d("pollo", questionAndAnswer.get("filename"));
+        Log.d("pollo", questionAndAnswer.get("timing"));
 
         // random button options
         ((Button)findViewById(R.id.choice1Voice)).setText(options[0]);
@@ -88,12 +95,7 @@ public class VoiceGameActivity extends AppCompatActivity{
                         ((Button)findViewById(R.id.choice3Voice)).getText().equals(correctAns) ? R.id.choice3Voice :
                                 R.id.choice4Voice;
 
-//        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
-//        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
-//        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
-//        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
-
-        final ImageButton playButton = (ImageButton) findViewById(R.id.buttonPlay);
+        final ImageButton playButton = (ImageButton) findViewById(R.id.buttonPlayVoice);
         playing = false;
 
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -103,33 +105,31 @@ public class VoiceGameActivity extends AppCompatActivity{
                 int endTime = (int)(Double.parseDouble(questionAndAnswer.get("timing").split("-")[1])*1000);
                 if(!playing){
                     try {
+                        findViewById(R.id.buttonPlayVoice).setEnabled(false);
+                        playedNum++;
                         player = new MediaPlayer();
                         player.setDataSource(Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording/" + questionAndAnswer.get("filename") + ".wav");
-                        player.seekTo(startTime);
                         player.prepare();
+                        player.seekTo(startTime);
                         player.start();
-                        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                        final Runnable mStopAction = new Runnable() {
                             @Override
-                            public void onCompletion(MediaPlayer mp) {
+                            public void run() {
                                 playButton.performClick();
                             }
-                        });
+                        };
+                        mHandler.postDelayed(mStopAction, endTime - startTime);
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else{
-                    final Runnable mStopAction = new Runnable() {
-                        @Override
-                        public void run() {
-                            player.stop();
-                        }
-                    };
-                    mHandler.postDelayed(mStopAction, endTime - startTime);
+                    player.stop();
+                    findViewById(R.id.buttonPlayVoice).setEnabled(true);
                 }
                 setPlayButton(playButton.getId(), playing);
                 playing = !playing;
-                playedNum++;
             }
         });
     }
@@ -178,45 +178,55 @@ public class VoiceGameActivity extends AppCompatActivity{
     }
 
     public void onChoice1(View view){
-        selectedID = R.id.choice1;
+        selectedID = R.id.choice1Voice;
         view.setBackgroundColor(Color.DKGRAY);
-        findViewById(R.id.choice2).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice3).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice4).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice2Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice3Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice4Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.nextVoice).setEnabled(true);
     }
 
     public void onChoice2(View view){
-        selectedID = R.id.choice2;
+        selectedID = R.id.choice2Voice;
         view.setBackgroundColor(Color.DKGRAY);
-        findViewById(R.id.choice1).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice3).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice4).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice1Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice3Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice4Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.nextVoice).setEnabled(true);
     }
 
     public void onChoice3(View view){
-        selectedID = R.id.choice3;
+        selectedID = R.id.choice3Voice;
         view.setBackgroundColor(Color.DKGRAY);
-        findViewById(R.id.choice1).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice2).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice4).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice1Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice2Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice4Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.nextVoice).setEnabled(true);
     }
 
     public void onChoice4(View view){
-        selectedID = R.id.choice4;
+        selectedID = R.id.choice4Voice;
         view.setBackgroundColor(Color.DKGRAY);
-        findViewById(R.id.choice1).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice2).setBackgroundColor(Color.GRAY);
-        findViewById(R.id.choice3).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice1Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice2Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.choice3Voice).setBackgroundColor(Color.GRAY);
+        findViewById(R.id.nextVoice).setEnabled(true);
     }
 
     public void goToNext(View view) throws InterruptedException {
         checkAnswer();
-        Thread.sleep(5000);
-        Intent intent = new Intent(this, VoiceGameActivity.class);
-        intent.putExtra("username", username);
-        intent.putExtra("availableFiles", availableFiles);
-        scoreTotal += (int) 100/playedNum;
-        intent.putExtra("score", scoreTotal);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //start your activity here
+                Intent intent = new Intent(getApplicationContext(), VoiceGameActivity.class);
+                intent.putExtra("username", username);
+                intent.putExtra("availableFiles", availableFiles);
+                intent.putExtra("score", scoreTotal);
+                startActivity(intent);
+            }
+
+        }, 2500L);
     }
 
 //    public void goToView(View view){
@@ -231,6 +241,7 @@ public class VoiceGameActivity extends AppCompatActivity{
         if(correctID == selectedID) {
             findViewById(selectedID).setBackgroundColor(Color.GREEN);
             ((Button)findViewById(selectedID)).setTextColor(Color.WHITE);
+            scoreTotal += playedNum > 0 ? (int) 100/playedNum : 0;
         }
         else {
             findViewById(selectedID).setBackgroundColor(Color.RED);
@@ -247,7 +258,7 @@ public class VoiceGameActivity extends AppCompatActivity{
     }
 
     private void displayScore(int newScore) {
-        TextView scoreView = (TextView) findViewById(R.id.scoreView);
+        TextView scoreView = (TextView) findViewById(R.id.scoreViewVoice);
         String scoreText = "Score : " + newScore;
         scoreView.setText(scoreText);
     }

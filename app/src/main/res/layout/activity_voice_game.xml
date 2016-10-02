@@ -33,7 +33,7 @@
 
             <!--insert play-->
             <ImageButton
-                android:id="@+id/buttonPlay"
+                android:id="@+id/buttonPlayVoice"
                 android:background="@android:color/transparent"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
@@ -116,6 +116,7 @@
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:text="Next"
                 android:id="@+id/nextVoice"
                 android:onClick="goToNext" />

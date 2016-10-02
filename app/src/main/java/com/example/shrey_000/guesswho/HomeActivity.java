@@ -11,6 +11,7 @@ import android.view.View;
 import com.example.shrey_000.guesswho.FaceGame.FaceGameActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.PersonalCollectionActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.ViewPersonalCollectionActivity;
+import com.example.shrey_000.guesswho.VoiceGame.VoiceGameActivity;
 //import com.example.shrey_000.guesswho.VoiceGame.VoiceGameActivity;
 
 public class HomeActivity extends AppCompatActivity {
@@ -31,9 +32,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onPlayVoiceGame(View view) {
-//        Intent voiceGame = new Intent(this,VoiceGameActivity.class);
-//        voiceGame.putExtra("userName", username);
-//        startActivity(voiceGame);
+        Intent voiceGame = new Intent(this,VoiceGameActivity.class);
+        voiceGame.putExtra("username", username);
+        startActivity(voiceGame);
     }
 
     public void onViewPersonalCollection(View view) {

@@ -11,10 +11,12 @@ import java.util.Random;
 public class RandomGenerator {
 
     private int numRows;
+    private String[] fixedNames;
 
     public RandomGenerator(int numRows)
     {
         this.numRows=numRows;
+        this.fixedNames = new String[]{"Naruto", "Sasuke", "Pablo", "Berna", "Zheng Jie", "Zhang Jie", "Kelly", "Qui Zhi", "Qing Mei", "Tzoo Lai"};
     }
 
     public int getRandomPhotoIndex()
@@ -36,8 +38,22 @@ public class RandomGenerator {
             }
         }
 
+        ArrayList<String> names = new ArrayList<>();
+
+        for(int i = 0; i < options.length; i++){
+            names.add(options[i].toString());
+        }
+
+        while (names.size() < 4){
+            int random = r.nextInt(fixedNames.length);
+            if(!names.contains(fixedNames[random])){
+                names.add(fixedNames[random]);
+            }
+        }
+
+
         for(int i = 0; i < numRows; i++){
-            shuffledOpt[i] = (String)(options[selectedIndices.get(i)]);
+            shuffledOpt[i] = (String)(names.get(selectedIndices.get(i)));
         }
 
         return shuffledOpt;
