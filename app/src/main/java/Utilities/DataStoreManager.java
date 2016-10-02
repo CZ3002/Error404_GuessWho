@@ -17,7 +17,7 @@ public interface DataStoreManager {
 
     ArrayList<HashMap<String, String>> getPhotos(String username);
 
-    ArrayList<HashMap<String, String>> getVoice(String username);
+    HashMap<String, HashMap<String, ArrayList<String>>> getVoice(String username);
 
     int createUser(User user);
 

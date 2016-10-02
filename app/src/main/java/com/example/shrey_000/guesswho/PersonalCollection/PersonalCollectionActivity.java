@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -65,7 +67,7 @@ import Utilities.DataStoreManager;
 public class PersonalCollectionActivity extends AppCompatActivity {
 
     private String username;
-    private Acquaintance acquaintance = null;
+    private static Acquaintance acquaintance = null;
 
     ImageView ivAvatar;
 
@@ -75,9 +77,10 @@ public class PersonalCollectionActivity extends AppCompatActivity {
     private DataStoreManager dataStoreManager = DataStoreFactory.createDataStoreManager();
     private android.support.v4.app.FragmentManager fragmentManager;
 
-    FragmentPersonalCollection fragmentPersonalCollection = new FragmentPersonalCollection();
+    FragmentRecordRecording fragmentRecordRecording = new FragmentRecordRecording();
+    FragmentListenRecording fragmentListenRecording = new FragmentListenRecording();
 
-    public static class FragmentPersonalCollection extends Fragment implements ISpeechDelegate {
+    public static class FragmentRecordRecording extends Fragment implements ISpeechDelegate {
 
         private static final String STRING_ASKED = "I Suppose You Know Me. Let Us See If You Can Remember. " +
                 "Will you join us at dinner. Have a good night. See You in the Morning";
@@ -97,7 +100,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            mView = inflater.inflate(R.layout.personal_collection_fragment, container, false);
+            mView = inflater.inflate(R.layout.record_fragment, container, false);
             mContext = getActivity().getApplicationContext();
             mHandler = new Handler();
 
@@ -132,7 +135,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
                                 return null;
                             }
                         }.execute();
-                        setButtonLabel(R.id.buttonRecord, "blue");
+                        setRecordButton(R.id.buttonRecord, "blue");
                     }
                     else if (mState == ConnectionState.CONNECTED) {
                         // end media recorder here
@@ -191,7 +194,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         /**
          * Change the button's label
          */
-        public void setButtonLabel(final int buttonId, final String colorVal) {
+        public void setRecordButton(final int buttonId, final String colorVal) {
             final Runnable runnableUi = new Runnable(){
                 @Override
                 public void run() {
@@ -221,7 +224,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         // delegages ----------------------------------------------
 
         public void onOpen() {
-            setButtonLabel(R.id.buttonRecord, "blue");
+            setRecordButton(R.id.buttonRecord, "blue");
             mState = ConnectionState.CONNECTED;
         }
 
@@ -230,7 +233,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         }
 
         public void onClose(int code, String reason, boolean remote) {
-            setButtonLabel(R.id.buttonRecord, "red");
+            setRecordButton(R.id.buttonRecord, "red");
             mState = ConnectionState.IDLE;
         }
 
@@ -238,7 +241,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
 
             try {
                 JSONObject jObj = new JSONObject(message);
-                // state message
+                // playing message
                 if (jObj.has("results")) {
                     //if has result
                     if(jObj.getJSONArray("results").getJSONObject(0).getBoolean("final")) {
@@ -281,6 +284,79 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         }
     }
 
+    public static class FragmentListenRecording extends Fragment{
+        MediaPlayer player;
+
+        public View mView = null;
+        public Context mContext = null;
+        private Handler mHandler = null;
+
+        boolean playing;
+
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            mView = inflater.inflate(R.layout.play_fragment, container, false);
+            mContext = getActivity().getApplicationContext();
+            mHandler = new Handler();
+
+            final ImageButton playButton = (ImageButton) mView.findViewById(R.id.buttonPlay);
+            playing = false;
+
+            playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!playing){
+
+                        try {
+                            if(acquaintance != null) {
+                                player = new MediaPlayer();
+                                player.setDataSource(Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording/" + acquaintance.getSoundFile() + ".wav");
+                                player.prepare();
+                                player.start();
+                                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    @Override
+                                    public void onCompletion(MediaPlayer mp) {
+                                        playButton.performClick();
+                                    }
+                                });
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        player.stop();
+                    }
+                    setPlayButton(playButton.getId(), playing);
+                    playing = !playing;
+                }
+            });
+
+            return mView;
+        }
+
+
+        public void setPlayButton(final int buttonId, final boolean playing) {
+            final Runnable runnableUi = new Runnable(){
+                @Override
+                public void run() {
+                    ImageButton button = (ImageButton)mView.findViewById(buttonId);
+                    if(!playing){
+                        button.setImageResource(R.drawable.ic_stop);
+                    }
+                    else{
+                        button.setImageResource(R.drawable.ic_play);
+                    }
+                }
+            };
+            new Thread(){
+                public void run(){
+                    mHandler.post(runnableUi);
+                }
+            }.start();
+        }
+    }
+
     public static class STTCommands extends AsyncTask<Void, Void, JSONObject> {
 
         protected JSONObject doInBackground(Void... none) {
@@ -318,15 +394,17 @@ public class PersonalCollectionActivity extends AppCompatActivity {
                 }
             });
 
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentRecordRecording).commit();
+
         } else{
-//            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+//            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentRecordRecording).commit();
             Button addButton = (Button)findViewById(R.id.addPCButton);
             TextView textView = (TextView) findViewById(R.id.et_defaultText);
             addButton.setVisibility(View.GONE);
             textView.setVisibility(View.GONE);
             setTitle(acquaintance.getAcqName());
             populateData();
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentListenRecording).commit();
         }
 
 
@@ -398,8 +476,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         }
     }
 
-    private Bitmap convertBase64ToBitmap(String base64)
-    {
+    private Bitmap convertBase64ToBitmap(String base64) {
         Bitmap bm;
         byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
         bm = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);

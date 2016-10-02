@@ -105,37 +105,22 @@ public class MySQLImpl implements DataStoreManager{
         return arrayList;
     }
 
-    public ArrayList<HashMap<String, String>> getVoice(String username){
-        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+    public HashMap<String, HashMap<String, ArrayList<String>>> getVoice(String username){
+        HashMap<String, HashMap<String, ArrayList<String>>> arrayList = new HashMap<>();
         try{
-            query = "SELECT soundFile, pos1, pos2, pos3, pos4, pos5 FROM personal_collection WHERE username = " + quotify(username) + terminate();
+            query = "SELECT acqName, soundFile, pos1, pos2, pos3, pos4, pos5 FROM personal_collection WHERE username = " + quotify(username) + terminate();
             stmt = con.createStatement();
             resultSet = stmt.executeQuery(query);
             while(resultSet.next()){
-                HashMap<String, String> hashMap = new HashMap<>();
-                hashMap.put("location", resultSet.getString("soundFile"));
-                hashMap.put("position", resultSet.getString("pos1"));
-                arrayList.add(hashMap);
-
-                hashMap = new HashMap<>();
-                hashMap.put("location", resultSet.getString("soundFile"));
-                hashMap.put("position", resultSet.getString("pos2"));
-                arrayList.add(hashMap);
-
-                hashMap = new HashMap<>();
-                hashMap.put("location", resultSet.getString("soundFile"));
-                hashMap.put("position", resultSet.getString("pos3"));
-                arrayList.add(hashMap);
-
-                hashMap = new HashMap<>();
-                hashMap.put("location", resultSet.getString("soundFile"));
-                hashMap.put("position", resultSet.getString("pos4"));
-                arrayList.add(hashMap);
-
-                hashMap = new HashMap<>();
-                hashMap.put("location", resultSet.getString("soundFile"));
-                hashMap.put("position", resultSet.getString("pos5"));
-                arrayList.add(hashMap);
+                String acqName = resultSet.getString("acqName");
+                String soundFile = resultSet.getString("soundFile");
+                arrayList.put(acqName, new HashMap<String, ArrayList<String>>());
+                arrayList.get(acqName).put(soundFile, new ArrayList<String>());
+                arrayList.get(acqName).get(soundFile).add(resultSet.getString("pos1"));
+                arrayList.get(acqName).get(soundFile).add(resultSet.getString("pos2"));
+                arrayList.get(acqName).get(soundFile).add(resultSet.getString("pos3"));
+                arrayList.get(acqName).get(soundFile).add(resultSet.getString("pos4"));
+                arrayList.get(acqName).get(soundFile).add(resultSet.getString("pos5"));
             }
         }catch(Exception e){
             Log.d("error", e.getMessage());
