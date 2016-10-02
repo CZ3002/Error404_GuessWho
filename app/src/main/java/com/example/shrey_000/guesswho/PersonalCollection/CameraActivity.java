@@ -26,18 +26,18 @@
 //import Utilities.MySQLImpl;
 //
 //public class CameraActivity extends AppCompatActivity {
-//    Button b1,b2;
-//    ImageView iv;
+//    Button cameraButton,b2;
+//    ImageView imageView;
 //
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_camera);
 //
-//        b1=(Button)findViewById(R.id.cameraButton);
-//        iv=(ImageView)findViewById(R.id.imageView);
+//        cameraButton=(Button)findViewById(R.id.cameraButton);
+//        imageView=(ImageView)findViewById(R.id.imageView);
 //
-//        b1.setOnClickListener(new View.OnClickListener() {
+//        cameraButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
 //                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -51,7 +51,7 @@
 //        super.onActivityResult(requestCode, resultCode, data);
 //        if(resultCode != 0) {
 //            Bitmap bp = (Bitmap) data.getExtras().get("data");
-//            iv.setImageBitmap(bp);
+//            imageView.setImageBitmap(bp);
 //        }
 //    }
 //
@@ -83,7 +83,7 @@
 //    }
 //
 //    public void addToPC(View view){
-//        Bitmap bm = ((BitmapDrawable)iv.getDrawable()).getBitmap();
+//        Bitmap bm = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 //        String name = ((EditText)findViewById(R.id.name)).getText().toString();
 //        String contact = ((EditText)findViewById(R.id.contact)).getText().toString();
 //        String relationship = ((EditText)findViewById(R.id.relationship)).getText().toString();
