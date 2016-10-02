@@ -1,9 +1,11 @@
 package Entities;
 
+import java.io.Serializable;
+
 /**
  * Created by aakashgupa1236 on 30/9/2016.
  */
-public class Acquaintance {
+public class Acquaintance implements Serializable {
     String username;
     String acqName;
     String relationship;

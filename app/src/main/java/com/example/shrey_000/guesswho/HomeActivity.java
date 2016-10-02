@@ -29,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onViewPersonalCollection(View view) {
-        Intent PCollection = new Intent(this,ViewPersonalCollectionActivity.class);
+        Intent PCollection = new Intent(this,PersonalCollectionActivity.class);
         startActivity(PCollection);
     }
 }
