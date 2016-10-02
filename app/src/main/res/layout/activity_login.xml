@@ -40,19 +40,16 @@
 
         <Button
             android:id="@+id/buttonLogin"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:text="Login" />
 
         <Button
             android:id="@+id/buttonSignUp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:text="Sign Up" />
 
     </LinearLayout>
 
 </RelativeLayout>
-
