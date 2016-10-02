@@ -20,7 +20,10 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.shrey_000.guesswho.HomeActivity;
+import com.example.shrey_000.guesswho.PersonalCollection.ViewPersonalCollectionActivity;
 import com.example.shrey_000.guesswho.R;
 
 import java.io.IOException;
@@ -259,7 +262,7 @@ public class VoiceGameActivity extends AppCompatActivity{
 
     private void displayScore(int newScore) {
         TextView scoreView = (TextView) findViewById(R.id.scoreViewVoice);
-        String scoreText = "Score : " + newScore;
+        String scoreText = "Score: " + newScore;
         scoreView.setText(scoreText);
     }
 
@@ -283,10 +286,28 @@ public class VoiceGameActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_back) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which){
+                    Toast.makeText(getApplicationContext(), "Total Score for this Session: " + scoreTotal, Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.putExtra("username",username);
+                    startActivity(intent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+
+                };
+            });
+            alertDialog.setTitle("Confirm Exit?");
+            alertDialog.setMessage("Are you sure you want to exit?");
+            alertDialog.setCancelable(true);
+            alertDialog.create();
+            alertDialog.show();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

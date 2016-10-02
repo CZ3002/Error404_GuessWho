@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.shrey_000.guesswho.HomeActivity;
 import com.example.shrey_000.guesswho.R;
 
 import org.json.JSONException;
@@ -95,12 +97,31 @@ public class FaceGameActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_back) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which){
+                    Toast.makeText(getApplicationContext(), "Total Score for this Session: " + scoreCalc.getScoreTotal(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    intent.putExtra("username",username);
+                    startActivity(intent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+
+                };
+            });
+            alertDialog.setTitle("Confirm Exit?");
+            alertDialog.setMessage("Are you sure you want to exit?");
+            alertDialog.setCancelable(true);
+            alertDialog.create();
+            alertDialog.show();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
 
     public void revealEyes(View view)
     {
