@@ -47,7 +47,7 @@ import com.ibm.watson.developer_cloud.android.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.android.speech_common.v1.TokenProvider;
 
 import org.apache.commons.io.IOUtils;
-//import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -375,14 +375,13 @@ public class PersonalCollectionActivity extends AppCompatActivity {
                 // server side app so the token factory in the server only provides tokens to authenticated clients
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpGet httpGet = new HttpGet(m_strTokenFactoryURL);
-//                HttpResponse executed = httpClient.execute(httpGet);
-//                InputStream is = executed.getEntity().getContent();
-//                StringWriter writer = new StringWriter();
-//                IOUtils.copy(is, writer, "UTF-8");
-//                String strToken = writer.toString();
-//                return strToken;
-                return "";
-            } catch (Exception e) {
+                HttpResponse executed = httpClient.execute(httpGet);
+                InputStream is = executed.getEntity().getContent();
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(is, writer, "UTF-8");
+                String strToken = writer.toString();
+                return strToken;
+            } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }
