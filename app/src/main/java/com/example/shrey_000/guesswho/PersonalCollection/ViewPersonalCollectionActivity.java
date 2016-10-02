@@ -44,7 +44,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
     private void updateViewPersonalCollection(String userName) {
         final ArrayList<Acquaintance> records = dataStoreManager.getAllAcquaintance(userName);
         int i = 0;
-        for(i = 0; i < records.size(); i++) {
+        for(i = 0; i < 3; i++) {
             final int val = i;
             if( i % 2 == 0) {
                 TableRow tableRow = new TableRow(this);
@@ -169,6 +169,8 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
             tableLayout1.getLayoutParams().width = (int) (180 * scale + 0.5f);
             tableLayout1.getLayoutParams().height = (int) (208 * scale + 0.5f);
             tableLayout1.setBackgroundResource(R.drawable.addpersonalcollection);
+            tableLayout1.setScaleX(0 * scale + 0.3f);
+            tableLayout1.setScaleY(0 * scale + 0.3f);
             tableLayout1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
