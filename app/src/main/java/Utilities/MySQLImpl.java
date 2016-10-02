@@ -53,6 +53,36 @@ public class MySQLImpl implements DataStoreManager{
 
     }
 
+    public ArrayList<Acquaintance> getAllAcquaintance(String username){
+        ArrayList<Acquaintance> arrayList = new ArrayList<>();
+        try {
+            query = "SELECT * FROM personal_collection WHERE username = " + quotify(username) + terminate();
+            stmt = con.createStatement();
+            resultSet = stmt.executeQuery(query);
+
+            while(resultSet.next()){
+                Acquaintance acquaintance = new Acquaintance();
+                HashMap<String, String> hashMap = new HashMap<>();
+                String name = resultSet.getString("acqName");
+                String base64 = resultSet.getString("base64");
+                String contact = resultSet.getString("contact");
+                String relation = resultSet.getString("relationship");
+                String voiceFilename = resultSet.getString("soundFile");
+                String notes = resultSet.getString("notes");
+                acquaintance.setAcqName(name);
+                acquaintance.setBase64(base64);
+                acquaintance.setContact(contact);
+                acquaintance.setRelationship(relation);
+                acquaintance.setSoundFile(voiceFilename);
+                acquaintance.setNotes(notes);
+                arrayList.add(acquaintance);
+            }
+        }catch (Exception e){
+            Log.d("error", e.getMessage());
+        }
+        return arrayList;
+    }
+
     public ArrayList<HashMap<String, String>> getPhotos(String username){
         ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
         try {

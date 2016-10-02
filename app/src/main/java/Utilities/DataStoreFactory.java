@@ -7,7 +7,7 @@ public class DataStoreFactory {
 
     private static DataStoreManager dataStoreManager;
 
-    private static final String DBURL = "jdbc:mysql://10.27.143.227:3306/guesswho";
+    private static final String DBURL = "jdbc:mysql://10.27.232.155:3306/guesswho";
     private static final String USERNAME = "pma";
     private static final String PASSWORD = "";
 

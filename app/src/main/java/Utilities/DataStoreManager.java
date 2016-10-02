@@ -13,6 +13,8 @@ import Entities.User;
  */
 public interface DataStoreManager {
 
+    ArrayList<Acquaintance> getAllAcquaintance(String username);
+
     ArrayList<HashMap<String, String>> getPhotos(String username);
 
     ArrayList<HashMap<String, String>> getVoice(String username);
