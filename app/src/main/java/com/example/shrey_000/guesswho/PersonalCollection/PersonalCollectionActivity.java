@@ -3,6 +3,7 @@ package com.example.shrey_000.guesswho.PersonalCollection;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
@@ -65,8 +65,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
     private String username;
     private Acquaintance acquaintance = null;
 
-    Button cameraButton;
-    ImageView imageView;
+    ImageView ivAvatar;
 
     private static String fileName = "";
     private static TreeMap<String, Double[]> timeStampValues = new TreeMap<>();
@@ -298,13 +297,12 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         username = getIntent().getStringExtra("username");
         acquaintance = (Acquaintance) getIntent().getSerializableExtra("acquaintance");
 
-        cameraButton =(Button)findViewById(R.id.cameraButton);
-        imageView =(ImageView)findViewById(R.id.imageView);
+        ivAvatar =(ImageView) findViewById(R.id.iv_avatar);
 
         fragmentManager = getSupportFragmentManager();
 
         if(acquaintance == null) {
-            cameraButton.setOnClickListener(new View.OnClickListener() {
+            ivAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -314,7 +312,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
 
             fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
         } else{
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+//            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
             Button addButton = (Button)findViewById(R.id.addPCButton);
             addButton.setVisibility(View.GONE);
             setTitle(acquaintance.getAcqName());
@@ -326,23 +324,25 @@ public class PersonalCollectionActivity extends AppCompatActivity {
     }
 
     private void populateData(){
-        findViewById(R.id.name).setEnabled(false);
-        findViewById(R.id.contact).setEnabled(false);
-        findViewById(R.id.relationship).setEnabled(false);
-        findViewById(R.id.note).setEnabled(false);
+        findViewById(R.id.et_name).setEnabled(false);
+        findViewById(R.id.et_contact).setEnabled(false);
+        findViewById(R.id.et_relationship).setEnabled(false);
+        findViewById(R.id.et_note).setEnabled(false);
 
-        ((EditText)findViewById(R.id.name)).setText(acquaintance.getAcqName());
-        ((EditText)findViewById(R.id.contact)).setText(acquaintance.getContact());
-        ((EditText)findViewById(R.id.relationship)).setText(acquaintance.getRelationship());
-        ((EditText)findViewById(R.id.note)).setText(acquaintance.getNotes());
+        Bitmap bp = (Bitmap) convertBase64ToBitmap(acquaintance.getBase64());
+        ivAvatar.setImageBitmap(bp);
+        ((EditText)findViewById(R.id.et_name)).setText(acquaintance.getAcqName());
+        ((EditText)findViewById(R.id.et_contact)).setText(acquaintance.getContact());
+        ((EditText)findViewById(R.id.et_relationship)).setText(acquaintance.getRelationship());
+        ((EditText)findViewById(R.id.et_note)).setText(acquaintance.getNotes());
     }
 
     public void addToPC(View view){
-        Bitmap bm = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        String name = ((EditText)findViewById(R.id.name)).getText().toString();
-        String contact = ((EditText)findViewById(R.id.contact)).getText().toString();
-        String relationship = ((EditText)findViewById(R.id.relationship)).getText().toString();
-        String note = ((EditText)findViewById(R.id.note)).getText().toString();
+        Bitmap bm = ((BitmapDrawable) ivAvatar.getDrawable()).getBitmap();
+        String name = ((EditText)findViewById(R.id.et_name)).getText().toString();
+        String contact = ((EditText)findViewById(R.id.et_contact)).getText().toString();
+        String relationship = ((EditText)findViewById(R.id.et_relationship)).getText().toString();
+        String note = ((EditText)findViewById(R.id.et_note)).getText().toString();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
@@ -388,12 +388,20 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         }
     }
 
+    private Bitmap convertBase64ToBitmap(String base64)
+    {
+        Bitmap bm;
+        byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
+        bm = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        return bm;
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode != 0) {
             Bitmap bp = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(bp);
+            ivAvatar.setImageBitmap(bp);
         }
     }
 
