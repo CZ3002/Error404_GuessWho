@@ -49,14 +49,15 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
     LinkedHashSet<String> optionsList;
     String name;
-
+    String username;
 
     private BitmapDrawable bd;
     private HttpURLConnection connectionDB=null;
     private HttpURLConnection connectionAPI = null;
     private DataStoreManager dbm;
 
-    public HTTPUtility(CanvasView canvasView, View view, Context context){
+    public HTTPUtility(String username, CanvasView canvasView, View view, Context context){
+        this.username = username;
         this.canvasView = canvasView;
         this.view=view;
         optionsList = new LinkedHashSet<>();
@@ -70,7 +71,8 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     protected JSONObject doInBackground(Void... nothing) {
         String responseStr = null;
         try {
-            ArrayList<HashMap<String, String>> contacts = dbm.getPhotos("gupta");
+            ArrayList<HashMap<String, String>> contacts = dbm.getPhotos(username);
+//            Log.d("bansal", "" + contacts.size());
             RandomGenerator rg = new RandomGenerator(contacts.size());
             int rowIndex = rg.getRandomPhotoIndex();
             name = contacts.get(rowIndex).get("acqName");

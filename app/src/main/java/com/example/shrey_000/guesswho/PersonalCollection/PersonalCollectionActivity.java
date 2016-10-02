@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 // IBM Watson SDK
@@ -321,7 +322,9 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         } else{
 //            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
             Button addButton = (Button)findViewById(R.id.addPCButton);
+            TextView textView = (TextView) findViewById(R.id.et_defaultText);
             addButton.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
             setTitle(acquaintance.getAcqName());
             populateData();
         }

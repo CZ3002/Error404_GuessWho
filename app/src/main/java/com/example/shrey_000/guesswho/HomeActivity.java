@@ -26,7 +26,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void onPlayFaceGame(View view) {
         Intent faceGame = new Intent(this,FaceGameActivity.class);
-        faceGame.putExtra("userName", username);
+        faceGame.putExtra("username", username);
         startActivity(faceGame);
     }
 

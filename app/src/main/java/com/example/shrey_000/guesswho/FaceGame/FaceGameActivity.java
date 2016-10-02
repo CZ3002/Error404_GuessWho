@@ -28,6 +28,7 @@ public class FaceGameActivity extends AppCompatActivity{
     private CanvasView cv;
     private CoordinateExtractor ce;
     private ScoreCalculatorFaceGame scoreCalc;
+    private String username;
     private String correctAns = new String();
     private String selectedAns = new String();
 
@@ -36,10 +37,12 @@ public class FaceGameActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_game);
 
-        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
-        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
-        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
-        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
+        username = getIntent().getStringExtra("username");
+
+//        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
+//        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
+//        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
+//        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
 
         View view = findViewById(R.id.imageView);
 
@@ -53,7 +56,7 @@ public class FaceGameActivity extends AppCompatActivity{
 
         cv = (CanvasView) findViewById(R.id.canvas);
 
-        HTTPUtility poster = new HTTPUtility(cv,view,this);
+        HTTPUtility poster = new HTTPUtility(username,cv,view,this);
         poster.execute();
     }
 

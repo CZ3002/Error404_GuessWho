@@ -22,5 +22,8 @@
     <string name="defaultUsername">&lt;username&gt;</string>
     <string name="defaultPassword">&lt;password&gt;</string>
 
+    <!-- for recording audio - PC -->
+    <string name="defaultText">I Suppose You Know Me. Let Us See If You Can Remember.
+        Will you join us at dinner. Have a good night. See You in the Morning</string>
     <string name="defaultTokenFactory">&lt;token-factory-url&gt;</string>
 </resources>
