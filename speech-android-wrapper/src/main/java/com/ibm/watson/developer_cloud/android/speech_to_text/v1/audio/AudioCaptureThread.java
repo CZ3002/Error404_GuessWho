@@ -103,8 +103,8 @@ public class AudioCaptureThread extends Thread {
                 mediaStorage.mkdirs();
             }
 
-            File rawFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording/" + System.currentTimeMillis()/1000 + ".pcm");
-            File audioFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording/" + System.currentTimeMillis()/1000 + ".wav");
+            File rawFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording/" + System.currentTimeMillis()/10000 + ".pcm");
+            File audioFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/GuessWho/recording/" + System.currentTimeMillis()/10000 + ".wav");
             FileOutputStream fileOutputStream = new FileOutputStream(rawFile, true);
             Log.d(TAG, "recording started!");
             while(!mStop) {

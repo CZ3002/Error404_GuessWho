@@ -16,6 +16,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.example.shrey_000.guesswho.HomeActivity;
 import com.example.shrey_000.guesswho.R;
 
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
                         intent.putExtra("username", username);
                         intent.putExtra("acquaintance", records.get(val));
+                        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                     }
                 });
@@ -111,6 +113,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
                         intent.putExtra("username", username);
                         intent.putExtra("acquaintance", records.get(val));
+                        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
                     }
                 });
@@ -197,5 +200,12 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
         byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
         bm = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         return new BitmapDrawable(null,bm);
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 }

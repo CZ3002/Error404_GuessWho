@@ -68,6 +68,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
 
     private String username;
     private static Acquaintance acquaintance = null;
+    private static MediaPlayer player = null;
 
     ImageView ivAvatar;
 
@@ -124,7 +125,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
                     if (mState == ConnectionState.IDLE) {
                         mState = ConnectionState.CONNECTING;
 
-                        fileName += System.currentTimeMillis()/1000;
+                        fileName += System.currentTimeMillis()/10000;
 
                         SpeechToText.sharedInstance().setModel(getString(R.string.modelDefault));
                         // start recognition
@@ -285,8 +286,6 @@ public class PersonalCollectionActivity extends AppCompatActivity {
     }
 
     public static class FragmentListenRecording extends Fragment{
-        MediaPlayer player;
-
         public View mView = null;
         public Context mContext = null;
         private Handler mHandler = null;
@@ -546,4 +545,16 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         intent.putExtra("username", username);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        if(player != null && player.isPlaying()){
+            player.stop();
+        }
+        Intent intent = new Intent(this, ViewPersonalCollectionActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
+        this.finish();
+    }
+
 }
