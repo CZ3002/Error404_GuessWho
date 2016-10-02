@@ -98,10 +98,10 @@
 //        MySQLImpl dbm = new MySQLImpl("jdbc:mysql://10.27.143.227:3306/guesswho","pma","");
 //        dbm.insertPC(acq);
 //
-//        goToMain();
+//        goToView();
 //    }
 //
-//    public void goToMain(){
+//    public void goToView(){
 //        Intent intentMain = new Intent(this,HomeActivity.class);
 //        startActivity(intentMain);
 //    }

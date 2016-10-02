@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -86,12 +87,13 @@ public class SignUpActivity extends AppCompatActivity {
     private void signUp(){
         User user = new User();
         user.setUsername(((EditText)findViewById(R.id.userIdSignUp)).getText().toString());
-        user.setName(((EditText)findViewById(R.id.userNameSignUp)).getText().toString());
-        user.setPassword(((EditText)findViewById(R.id.userPasswordSignUp)).getText().toString());
-        user.setContact(((EditText)findViewById(R.id.userContactSignUp)).getText().toString());
-        user.setDOB(((EditText)findViewById(R.id.userDOBSignUp)).getText().toString());
+        user.setName(((EditText) findViewById(R.id.userNameSignUp)).getText().toString());
+        user.setPassword(((EditText) findViewById(R.id.userPasswordSignUp)).getText().toString());
+        user.setContact(((EditText) findViewById(R.id.userContactSignUp)).getText().toString());
+        user.setDOB(((EditText) findViewById(R.id.userDOBSignUp)).getText().toString());
 
         dataStoreManager.createUser(user);
+        Toast.makeText(SignUpActivity.this, "User successfully registered", Toast.LENGTH_LONG).show();
         this.finish();
     }
 

@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
@@ -35,6 +36,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 // IBM Watson SDK
 import com.example.shrey_000.guesswho.HomeActivity;
@@ -55,15 +57,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import Entities.Acquaintance;
-import Utilities.MySQLImpl;
+import Utilities.DataStoreFactory;
+import Utilities.DataStoreManager;
 
 public class PersonalCollectionActivity extends AppCompatActivity {
+
+    private String username;
+    private Acquaintance acquaintance = null;
 
     Button cameraButton;
     ImageView imageView;
 
     private static String fileName = "";
     private static TreeMap<String, Double[]> timeStampValues = new TreeMap<>();
+
+    private DataStoreManager dataStoreManager = DataStoreFactory.createDataStoreManager();
+    private android.support.v4.app.FragmentManager fragmentManager;
 
     FragmentPersonalCollection fragmentPersonalCollection = new FragmentPersonalCollection();
 
@@ -265,8 +274,6 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         }
     }
 
-
-
     public static class STTCommands extends AsyncTask<Void, Void, JSONObject> {
 
         protected JSONObject doInBackground(Void... none) {
@@ -286,26 +293,72 @@ public class PersonalCollectionActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
 
-        //setContentView(R.layout.activity_home);
         setContentView(R.layout.activity_personal_collection);
+
+        username = getIntent().getStringExtra("username");
+        acquaintance = (Acquaintance) getIntent().getSerializableExtra("acquaintance");
 
         cameraButton =(Button)findViewById(R.id.cameraButton);
         imageView =(ImageView)findViewById(R.id.imageView);
 
-        cameraButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 0);
-            }
-        });
+        fragmentManager = getSupportFragmentManager();
 
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+        if(acquaintance == null) {
+            cameraButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, 0);
+                }
+            });
 
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+        } else{
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+            Button addButton = (Button)findViewById(R.id.addPCButton);
+            addButton.setVisibility(View.GONE);
+            setTitle(acquaintance.getAcqName());
+            populateData();
+        }
 
 
         //actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#B5C0D0")));
+    }
+
+    private void populateData(){
+        findViewById(R.id.name).setEnabled(false);
+        findViewById(R.id.contact).setEnabled(false);
+        findViewById(R.id.relationship).setEnabled(false);
+        findViewById(R.id.note).setEnabled(false);
+
+        ((EditText)findViewById(R.id.name)).setText(acquaintance.getAcqName());
+        ((EditText)findViewById(R.id.contact)).setText(acquaintance.getContact());
+        ((EditText)findViewById(R.id.relationship)).setText(acquaintance.getRelationship());
+        ((EditText)findViewById(R.id.note)).setText(acquaintance.getNotes());
+    }
+
+    public void addToPC(View view){
+        Bitmap bm = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        String name = ((EditText)findViewById(R.id.name)).getText().toString();
+        String contact = ((EditText)findViewById(R.id.contact)).getText().toString();
+        String relationship = ((EditText)findViewById(R.id.relationship)).getText().toString();
+        String note = ((EditText)findViewById(R.id.note)).getText().toString();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        String base64 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+
+        Acquaintance acq = new Acquaintance(username, name, relationship, contact, note, base64, fileName,
+                timeStampValues.get("i")[0] + "-" + timeStampValues.get("me")[1],
+                timeStampValues.get("let")[0] + "-" + timeStampValues.get("remember")[1],
+                timeStampValues.get("will")[0] + "-" + timeStampValues.get("dinner")[1],
+                timeStampValues.get("have")[0] + "-" + timeStampValues.get("night")[1],
+                timeStampValues.get("see")[0] + "-" + timeStampValues.get("morning")[1]);
+
+        dataStoreManager.insertPC(acq);
+        Toast.makeText(PersonalCollectionActivity.this, name + " added to Personal Collection", Toast.LENGTH_LONG).show();
+
+        goToView();
     }
 
     static class MyTokenProvider implements TokenProvider {
@@ -371,27 +424,9 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addToPC(View view){
-        Bitmap bm = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        String name = ((EditText)findViewById(R.id.name)).getText().toString();
-        String contact = ((EditText)findViewById(R.id.contact)).getText().toString();
-        String relationship = ((EditText)findViewById(R.id.relationship)).getText().toString();
-        String note = ((EditText)findViewById(R.id.note)).getText().toString();
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-        String base64 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-
-        Acquaintance acq = new Acquaintance("gupta", name, relationship, contact, note, base64, "","","","","","");
-
-        MySQLImpl dbm = new MySQLImpl("jdbc:mysql://10.27.143.227:3306/guesswho","pma","");
-        dbm.insertPC(acq);
-
-        goToMain();
-    }
-
-    public void goToMain(){
-        Intent intentMain = new Intent(this,HomeActivity.class);
-        startActivity(intentMain);
+    public void goToView(){
+        Intent intent = new Intent(this,HomeActivity.class);
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 }

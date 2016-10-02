@@ -161,7 +161,7 @@ public class FaceGameActivity extends AppCompatActivity{
         checkAnswer();
     }
 
-//    public void goToMain(View view){
+//    public void goToView(View view){
 //        RadioGroup rg = (RadioGroup)findViewById(R.id.options);
 //        String selectedAnswer = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
 //        checkAnswer(selectedAnswer);

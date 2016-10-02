@@ -27,5 +27,5 @@ dependencies {
     //    compile 'com.ibm.watson.developer_cloud:java-sdk:3.3.1'
     //    compile 'com.ibm.watson.developer_cloud:java-wrapper:1.1.1'
     compile project(':speech-android-wrapper')
-    compile files('C:/Users/Ankur Bansal/AndroidStudioProjects/GuessWho/lib/com.mysql.jdbc_5.1.5.jar')
+    compile files('C:/Android Projects/Integrated/lib/com.mysql.jdbc_5.1.5.jar')
 }
