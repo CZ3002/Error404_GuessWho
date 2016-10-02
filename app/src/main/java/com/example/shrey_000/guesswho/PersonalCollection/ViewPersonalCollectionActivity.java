@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -18,18 +17,18 @@ import android.widget.TextView;
 
 import com.example.shrey_000.guesswho.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import Entities.Acquaintance;
 import Utilities.DataStoreFactory;
 import Utilities.DataStoreManager;
-import Utilities.HTTPUtility;
 
 public class ViewPersonalCollectionActivity extends AppCompatActivity {
 
     //TODO intent se get username
+
+    TableLayout tableLayout;
+    float scale;
 
     DataStoreManager dataStoreManager = DataStoreFactory.createDataStoreManager();
     @Override
@@ -37,14 +36,15 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_personal_collection);
+        tableLayout = (TableLayout) findViewById(R.id.tableContainer);
+        scale = getResources().getDisplayMetrics().density;
         updateViewPersonalCollection("gupta");
     }
 
     private void updateViewPersonalCollection(String userName) {
         final ArrayList<Acquaintance> records = dataStoreManager.getAllAcquaintance(userName);
-        TableLayout tableLayout = (TableLayout) findViewById(R.id.tableContainer);
-        float scale = getResources().getDisplayMetrics().density;
-        for(int i = 0; i < records.size(); i++) {
+        int i = 0;
+        for(i = 0; i < records.size(); i++) {
             final int val = i;
             if( i % 2 == 0) {
                 TableRow tableRow = new TableRow(this);
@@ -58,7 +58,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
-                        intent.putExtra("Acquaintance", records.get(val));
+                        intent.putExtra("acquaintance", records.get(val));
                         startActivity(intent);
                     }
                 });
@@ -103,7 +103,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
-                        intent.putExtra("Acquaintance", records.get(val));
+                        intent.putExtra("acquaintance", records.get(val));
                         startActivity(intent);
                     }
                 });
@@ -137,10 +137,41 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                 textView1.setPadding(0,0,0,(int) (10 * scale + 0.5f));
             }
         }
-        //addAcquaintanceButton(i);
+        addAcquaintanceButton(i);
     }
 
     public void addAcquaintanceButton(int i){
+        if(i%2 == 0) {
+            TableRow tableRow = new TableRow(this);
+            tableLayout.addView(tableRow);
+            tableRow.setId(i+1);
+            TableLayout tableLayout1 = new TableLayout(this);
+            tableRow.addView(tableLayout1);
+            tableLayout1.setGravity(Gravity.CENTER);
+            tableLayout1.getLayoutParams().width = (int) (180 * scale + 0.5f);
+            tableLayout1.getLayoutParams().height = (int) (208 * scale + 0.5f);
+            tableLayout1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
+        else {
+            TableRow tableRow = (TableRow) findViewById(i);
+            TableLayout tableLayout1 = new TableLayout(this);
+            tableRow.addView(tableLayout1);
+            tableLayout1.setGravity(Gravity.CENTER);
+            tableLayout1.getLayoutParams().width = (int) (180 * scale + 0.5f);
+            tableLayout1.getLayoutParams().height = (int) (208 * scale + 0.5f);
+//            tableLayout1.addView(imageView);
+            tableLayout1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
 
     }
 
