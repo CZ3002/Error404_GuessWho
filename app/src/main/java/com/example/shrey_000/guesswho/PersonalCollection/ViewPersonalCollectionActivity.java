@@ -150,10 +150,14 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
             tableLayout1.setGravity(Gravity.CENTER);
             tableLayout1.getLayoutParams().width = (int) (180 * scale + 0.5f);
             tableLayout1.getLayoutParams().height = (int) (208 * scale + 0.5f);
+            tableLayout1.setBackgroundResource(R.drawable.addpersonalcollection);
+            tableLayout1.setScaleX(0 * scale + 0.3f);
+            tableLayout1.setScaleY(0 * scale + 0.3f);
             tableLayout1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
+                    startActivity(intent);
                 }
             });
         }
@@ -164,11 +168,12 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
             tableLayout1.setGravity(Gravity.CENTER);
             tableLayout1.getLayoutParams().width = (int) (180 * scale + 0.5f);
             tableLayout1.getLayoutParams().height = (int) (208 * scale + 0.5f);
-//            tableLayout1.addView(imageView);
+            tableLayout1.setBackgroundResource(R.drawable.addpersonalcollection);
             tableLayout1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
+                    startActivity(intent);
                 }
             });
         }

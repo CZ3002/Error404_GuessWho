@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.example.shrey_000.guesswho.FaceGame.FaceGameActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.PersonalCollectionActivity;
+import com.example.shrey_000.guesswho.PersonalCollection.ViewPersonalCollectionActivity;
 import com.example.shrey_000.guesswho.VoiceGame.VoiceGameActivity;
 
 public class HomeActivity extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onViewPersonalCollection(View view) {
-        Intent PCollection = new Intent(this,PersonalCollectionActivity.class);
+        Intent PCollection = new Intent(this,ViewPersonalCollectionActivity.class);
         startActivity(PCollection);
     }
 
