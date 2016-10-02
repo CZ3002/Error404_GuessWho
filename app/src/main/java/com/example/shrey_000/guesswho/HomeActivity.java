@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.shrey_000.guesswho.FaceGame.FaceGameActivity;
-import com.example.shrey_000.guesswho.PersonalCollection.CameraActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.PersonalCollectionActivity;
 import com.example.shrey_000.guesswho.VoiceGame.VoiceGameActivity;
 

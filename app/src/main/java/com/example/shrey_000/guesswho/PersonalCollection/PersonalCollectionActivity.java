@@ -4,19 +4,16 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.TreeMap;
 
-import android.media.MediaRecorder;
 import android.os.AsyncTask;
-import android.os.Environment;
 
 import android.os.Handler;
 import android.os.StrictMode;
@@ -51,9 +48,9 @@ public class PersonalCollectionActivity extends AppCompatActivity {
     private static String fileName = "";
     private static TreeMap<String, Double[]> timeStampValues = new TreeMap<>();
 
-    FragmentTabSTT fragmentTabSTT = new FragmentTabSTT();
+    FragmentPersonalCollection fragmentPersonalCollection = new FragmentPersonalCollection();
 
-    public static class FragmentTabSTT extends Fragment implements ISpeechDelegate {
+    public static class FragmentPersonalCollection extends Fragment implements ISpeechDelegate {
 
         private static final String STRING_ASKED = "I Suppose You Know Me. Let Us See If You Can Remember. " +
                 "Will you join us at dinner. Have a good night. See You in the Morning";
@@ -73,7 +70,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            mView = inflater.inflate(R.layout.tab_stt_fragment, container, false);
+            mView = inflater.inflate(R.layout.personal_collection_fragment, container, false);
             mContext = getActivity().getApplicationContext();
             mHandler = new Handler();
 
@@ -273,10 +270,12 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         }
 
         //setContentView(R.layout.activity_home);
-        setContentView(R.layout.activity_tab_text);
+        setContentView(R.layout.activity_personal_collection);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentTabSTT).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentPersonalCollection).commit();
+
+
 
         //actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#B5C0D0")));
     }

@@ -44,6 +44,7 @@ public class AudioCaptureThread extends Thread {
     private boolean mStop = false;
     private boolean mStopped = false;
     private int mSamplingRate = -1;
+    private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     private IAudioConsumer mIAudioConsumer = null;
 
     // the thread receives high priority because it needs to do real time audio capture
@@ -52,6 +53,33 @@ public class AudioCaptureThread extends Thread {
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
         mSamplingRate = iSamplingRate;
         mIAudioConsumer = IAudioConsumer;
+    }
+
+    public AudioRecord findAudioRecord() {
+        for (int rate : mSampleRates) {
+            for (short audioFormat : new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT }) {
+                for (short channelConfig : new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO }) {
+                    try {
+                        Log.d("error", "Attempting rate " + rate + "Hz, bits: " + audioFormat + ", channel: "
+                                + channelConfig);
+                        int bufferSize = AudioRecord.getMinBufferSize(rate, channelConfig, audioFormat);
+
+                        if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
+                            // check if we can instantiate and have a success
+                            AudioRecord recorder = new AudioRecord(AudioSource.MIC, rate, channelConfig, audioFormat, bufferSize);
+
+                            if (recorder.getState() == AudioRecord.STATE_INITIALIZED){
+                                mSamplingRate = rate;
+                                return recorder;
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("error", rate + "Exception, keep trying.",e);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     // once the thread is started it runs nonstop until it is stopped from the outside
@@ -66,7 +94,7 @@ public class AudioCaptureThread extends Thread {
             // with a fixed amount of protocol-data), also I have noticed that some servers cannot handle too many small packages
 
             // initialize the recorder (buffer size will be at least 1/4th of a second)
-            recorder = new AudioRecord(AudioSource.MIC, mSamplingRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, iN);
+            recorder = findAudioRecord();
             recorder.startRecording();
 
             // Create a directory GuessWho to store audio recordings

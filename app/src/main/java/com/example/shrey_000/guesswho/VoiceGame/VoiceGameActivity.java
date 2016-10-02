@@ -1,25 +1,18 @@
 package com.example.shrey_000.guesswho.VoiceGame;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.TreeMap;
-import java.util.concurrent.RunnableFuture;
 
-import android.app.FragmentTransaction;
-import android.media.MediaRecorder;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.app.ActionBar;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -77,7 +70,7 @@ public class VoiceGameActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            mView = inflater.inflate(R.layout.tab_stt_fragment, container, false);
+            mView = inflater.inflate(R.layout.personal_collection_fragment, container, false);
             mContext = getActivity().getApplicationContext();
             mHandler = new Handler();
 
@@ -277,7 +270,7 @@ public class VoiceGameActivity extends AppCompatActivity {
         }
 
         //setContentView(R.layout.activity_home);
-        setContentView(R.layout.activity_tab_text);
+        setContentView(R.layout.activity_personal_collection);
 
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.fragment_container, fragmentTabSTT).commit();
