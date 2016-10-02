@@ -11,28 +11,34 @@ import android.view.View;
 import com.example.shrey_000.guesswho.FaceGame.FaceGameActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.PersonalCollectionActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.ViewPersonalCollectionActivity;
-import com.example.shrey_000.guesswho.VoiceGame.VoiceGameActivity;
+//import com.example.shrey_000.guesswho.VoiceGame.VoiceGameActivity;
 
 public class HomeActivity extends AppCompatActivity {
+
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        username = getIntent().getStringExtra("username");
         setContentView(R.layout.activity_home);
     }
 
     public void onPlayFaceGame(View view) {
         Intent faceGame = new Intent(this,FaceGameActivity.class);
+        faceGame.putExtra("userName", username);
         startActivity(faceGame);
     }
 
     public void onPlayVoiceGame(View view) {
-        Intent voiceGame = new Intent(this,VoiceGameActivity.class);
-        startActivity(voiceGame);
+//        Intent voiceGame = new Intent(this,VoiceGameActivity.class);
+//        voiceGame.putExtra("userName", username);
+//        startActivity(voiceGame);
     }
 
     public void onViewPersonalCollection(View view) {
         Intent PCollection = new Intent(this,ViewPersonalCollectionActivity.class);
+        PCollection.putExtra("username", username);
         startActivity(PCollection);
     }
 

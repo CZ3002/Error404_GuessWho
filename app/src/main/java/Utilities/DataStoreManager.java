@@ -23,5 +23,7 @@ public interface DataStoreManager {
 
     int insertPC(Acquaintance acquaintance);
 
+    int deletePC(Acquaintance acquaintance);
+
     String validateUser(String username, String password);
 }

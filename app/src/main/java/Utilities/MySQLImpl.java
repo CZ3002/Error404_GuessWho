@@ -69,6 +69,7 @@ public class MySQLImpl implements DataStoreManager{
                 String relation = resultSet.getString("relationship");
                 String voiceFilename = resultSet.getString("soundFile");
                 String notes = resultSet.getString("notes");
+                acquaintance.setUsername(username);
                 acquaintance.setAcqName(name);
                 acquaintance.setBase64(base64);
                 acquaintance.setContact(contact);
@@ -191,6 +192,20 @@ public class MySQLImpl implements DataStoreManager{
         }
     }
 
+    public int deletePC(Acquaintance acquaintance){
+        try{
+            query = "DELETE FROM personal_collection WHERE username =" + quotify(acquaintance.getUsername()) +
+                    " AND acqName = " + quotify(acquaintance.getAcqName()) + terminate();
+
+            stmt = con.createStatement();
+
+            return stmt.executeUpdate(query);
+        }catch(Exception e){
+            Log.d("error", e.getMessage());
+        }
+        return -1;
+    }
+
     public String validateUser(String username, String password){
         try{
             query = "SELECT * FROM user WHERE username =" + quotify(username) + " " +
@@ -206,7 +221,7 @@ public class MySQLImpl implements DataStoreManager{
         }catch(Exception e){
             Log.d("error", e.getMessage());
         }
-        return "Success";
+        return "Error";
     }
 
     private String terminate(){

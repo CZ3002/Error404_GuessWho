@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,7 +26,7 @@ import Utilities.DataStoreManager;
 
 public class ViewPersonalCollectionActivity extends AppCompatActivity {
 
-    //TODO intent se get username
+    private String username;
 
     TableLayout tableLayout;
     float scale;
@@ -36,15 +37,19 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_personal_collection);
+
+        username = getIntent().getStringExtra("username");
+        Log.d("thullu", username);
+
         tableLayout = (TableLayout) findViewById(R.id.tableContainer);
         scale = getResources().getDisplayMetrics().density;
-        updateViewPersonalCollection("gupta");
+        updateViewPersonalCollection();
     }
 
-    private void updateViewPersonalCollection(String userName) {
-        final ArrayList<Acquaintance> records = dataStoreManager.getAllAcquaintance(userName);
+    private void updateViewPersonalCollection() {
+        final ArrayList<Acquaintance> records = dataStoreManager.getAllAcquaintance(username);
         int i = 0;
-        for(i = 0; i < 3; i++) {
+        for(i = 0; i < records.size(); i++) {
             final int val = i;
             if( i % 2 == 0) {
                 TableRow tableRow = new TableRow(this);
@@ -58,6 +63,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
+                        intent.putExtra("username", username);
                         intent.putExtra("acquaintance", records.get(val));
                         startActivity(intent);
                     }
@@ -103,6 +109,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
+                        intent.putExtra("username", username);
                         intent.putExtra("acquaintance", records.get(val));
                         startActivity(intent);
                     }
@@ -157,6 +164,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
+                    intent.putExtra("username", username);
                     startActivity(intent);
                 }
             });
@@ -175,6 +183,7 @@ public class ViewPersonalCollectionActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getApplicationContext(),PersonalCollectionActivity.class);
+                    intent.putExtra("username", username);
                     startActivity(intent);
                 }
             });

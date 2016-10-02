@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     private void doLogin(String result){
         if(result.equals("Success")){
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            intent.putExtra("userName", userId.getText().toString());
+            intent.putExtra("username", userId.getText().toString());
             startActivityForResult(intent, 1);
         }else{
             Toast.makeText(LoginActivity.this, "Username or password is incorrect", Toast.LENGTH_LONG).show();
@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences("CZ3002Prefs", MODE_MULTI_PROCESS);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("loginId", username);
-            editor.commit();
+            editor.apply();
             return "Success";
         }
         return "Error";

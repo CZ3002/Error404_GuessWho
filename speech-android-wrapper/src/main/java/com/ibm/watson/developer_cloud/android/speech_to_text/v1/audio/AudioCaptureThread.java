@@ -69,7 +69,7 @@ public class AudioCaptureThread extends Thread {
                             AudioRecord recorder = new AudioRecord(AudioSource.MIC, rate, channelConfig, audioFormat, bufferSize);
 
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED){
-                                mSamplingRate = rate;
+//                                mSamplingRate = rate;
                                 return recorder;
                             }
                         }
@@ -94,7 +94,7 @@ public class AudioCaptureThread extends Thread {
             // with a fixed amount of protocol-data), also I have noticed that some servers cannot handle too many small packages
 
             // initialize the recorder (buffer size will be at least 1/4th of a second)
-            recorder = findAudioRecord();
+            recorder = new AudioRecord(AudioSource.MIC, mSamplingRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, iN);
             recorder.startRecording();
 
             // Create a directory GuessWho to store audio recordings

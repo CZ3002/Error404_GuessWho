@@ -1,11 +1,13 @@
 package com.example.shrey_000.guesswho.PersonalCollection;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -39,7 +41,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 // IBM Watson SDK
-import com.example.shrey_000.guesswho.HomeActivity;
 import com.example.shrey_000.guesswho.R;
 import com.ibm.watson.developer_cloud.android.speech_to_text.v1.dto.SpeechConfiguration;
 import com.ibm.watson.developer_cloud.android.speech_to_text.v1.ISpeechDelegate;
@@ -253,7 +254,13 @@ public class PersonalCollectionActivity extends AppCompatActivity {
                             Double startTime = timeStampArray.getJSONArray(j).getDouble(1);
                             Double endTime = timeStampArray.getJSONArray(j).getDouble(2);
                             if(Arrays.asList(REQUIRED_VALUES).contains(key.toLowerCase())){
-                                timeStampValues.put(key, new Double[]{startTime, endTime});
+                                timeStampValues.put(key.toLowerCase(), new Double[]{startTime, endTime});
+                            }
+                        }
+
+                        for(String val : REQUIRED_VALUES){
+                            if(!timeStampValues.containsKey(val)){
+                                timeStampValues.put(val.toLowerCase(), new Double[]{0.0, 8.0});
                             }
                         }
                         for(String keyVal : timeStampValues.keySet())
@@ -329,7 +336,7 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         findViewById(R.id.et_relationship).setEnabled(false);
         findViewById(R.id.et_note).setEnabled(false);
 
-        Bitmap bp = (Bitmap) convertBase64ToBitmap(acquaintance.getBase64());
+        Bitmap bp = convertBase64ToBitmap(acquaintance.getBase64());
         ivAvatar.setImageBitmap(bp);
         ((EditText)findViewById(R.id.et_name)).setText(acquaintance.getAcqName());
         ((EditText)findViewById(R.id.et_contact)).setText(acquaintance.getContact());
@@ -413,7 +420,9 @@ public class PersonalCollectionActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if(acquaintance != null){
+            getMenuInflater().inflate(R.menu.menu_pc, menu);
+        }
         return true;
     }
 
@@ -426,14 +435,34 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_delete_PC && acquaintance != null) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which){
+                    dataStoreManager.deletePC(acquaintance);
+                    Toast.makeText(PersonalCollectionActivity.this, acquaintance.getAcqName() + " deleted successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(),ViewPersonalCollectionActivity.class);
+                    intent.putExtra("username",username);
+                    startActivity(intent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+
+                };
+            });
+            alertDialog.setTitle("Confirm Delete?");
+            alertDialog.setMessage("Are you sure you want to remove " + acquaintance.getAcqName() + " from your personal collection?");
+            alertDialog.setCancelable(false);
+            alertDialog.create();
+            alertDialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void goToView(){
-        Intent intent = new Intent(this,HomeActivity.class);
+        Intent intent = new Intent(this,ViewPersonalCollectionActivity.class);
         intent.putExtra("username", username);
         startActivity(intent);
     }
