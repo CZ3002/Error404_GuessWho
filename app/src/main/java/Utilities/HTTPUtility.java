@@ -127,7 +127,7 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     public void generateRandomOptions(String name, RandomGenerator rg, ArrayList<HashMap<String, String>> contacts){
         optionsList.add(name);
 
-        while(optionsList.size() < 4){
+        while(optionsList.size() < contacts.size()){
             int wrongOptIndex = rg.getRandomPhotoIndex();
             String wrongOpt = contacts.get(wrongOptIndex).get("acqName");
             optionsList.add(wrongOpt);

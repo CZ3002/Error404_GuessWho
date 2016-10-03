@@ -65,6 +65,7 @@ public class HomeActivity extends AppCompatActivity {
             editor.remove("loginId");
             editor.commit();
             Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
             this.finish();
         }

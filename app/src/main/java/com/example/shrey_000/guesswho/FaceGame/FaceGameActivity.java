@@ -7,6 +7,7 @@ import android.graphics.Path;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -41,10 +42,12 @@ public class FaceGameActivity extends AppCompatActivity{
 
         username = getIntent().getStringExtra("username");
 
-//        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
-//        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
-//        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
-//        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
+        Log.d("username",username);
+
+        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
 
         View view = findViewById(R.id.imageView);
 
@@ -208,6 +211,7 @@ public class FaceGameActivity extends AppCompatActivity{
             public void onClick(DialogInterface dialog, int which){
                 Intent intent = new Intent(getApplicationContext(),FaceGameActivity.class);
                 intent.putExtra("score",scoreCalc.getScoreTotal());
+                intent.putExtra("username",username);
                 startActivity(intent);
             }
         });
