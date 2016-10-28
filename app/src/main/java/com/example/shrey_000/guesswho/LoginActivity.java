@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,15 +100,19 @@ public class LoginActivity extends AppCompatActivity {
     private String validate(String username, String password){
 
         String result = dataStoreManager.validateUser(username, password);
-        if(result.equals(""))
+        if(result.equals("")) {
+            Log.d("Inside If","");
             return "Error";
+        }
         else if(result.equals("Success")){
+            Log.d("Inside Else", "");
             SharedPreferences prefs = getSharedPreferences("CZ3002Prefs", MODE_MULTI_PROCESS);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("loginId", username);
             editor.apply();
             return "Success";
         }
+        Log.d("outside bitches","");
         return "Error";
     }
 

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Path;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,12 +19,16 @@ import android.widget.Toast;
 
 import com.example.shrey_000.guesswho.HomeActivity;
 import com.example.shrey_000.guesswho.R;
+import com.example.shrey_000.guesswho.ScoreActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import Utilities.CoordinateExtractor;
+import Utilities.DataStoreFactory;
+import Utilities.DataStoreManager;
 import Utilities.HTTPUtility;
+import Utilities.MySQLImpl;
 import Utilities.ScoreCalculatorFaceGame;
 
 
@@ -104,9 +109,11 @@ public class FaceGameActivity extends AppCompatActivity{
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which){
-                    Toast.makeText(getApplicationContext(), "Total Score for this Session: " + scoreCalc.getScoreTotal(), Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    DataStoreManager dbm = DataStoreFactory.createDataStoreManager();
+                    dbm.insertScore(username,"face",scoreCalc.getScoreTotal());
+                    Intent intent = new Intent(getApplicationContext(), ScoreActivity.class);
                     intent.putExtra("username",username);
+                    intent.putExtra("game","face");
                     startActivity(intent);
                 }
             });

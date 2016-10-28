@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,9 +36,11 @@ public class MySQLImpl implements DataStoreManager{
                 // TODO Auto-generated method stub
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
-                    con = (Connection) DriverManager.getConnection(databaseURL,
+                    con = DriverManager.getConnection(databaseURL,
                             username, password);
+                    Log.d("pplolo", "hello");
                 } catch (Exception e) {
+                    Log.d("pplolo", e.getMessage());
                     System.err.println(e.getMessage());
                 }
             }
@@ -48,9 +51,9 @@ public class MySQLImpl implements DataStoreManager{
             t.join();
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
+            Log.d("pplolo", "polo");
             e.printStackTrace();
         }
-
     }
 
     public ArrayList<Acquaintance> getAllAcquaintance(String username){
@@ -149,6 +152,38 @@ public class MySQLImpl implements DataStoreManager{
         }
     }
 
+    public int insertScore(String username, String gameName, int score) {
+        try {
+            query = "INSERT INTO score_history (username,game,score) VALUES("
+                    + quotify(username) + ", "
+                    + quotify(gameName) + ", "
+                    + quotify("" + score) + ")";
+            stmt = con.createStatement();
+            return stmt.executeUpdate(query);
+        } catch (Exception e) {
+            Log.d("error", e.getMessage());
+        }
+        return -1;
+    }
+
+    public HashMap<String,String> getScores(String username, String gameName) {
+        HashMap<String,String> scoreList = new HashMap<>();
+        try {
+            query = "SELECT score,DateTime FROM score_history WHERE username = " + quotify(username) + " AND game = " + quotify(gameName)
+                    + " ORDER BY score DESC LIMIT 5";
+            stmt = con.createStatement();
+            resultSet = stmt.executeQuery(query);
+            while(resultSet.next()) {
+                String dateTime = resultSet.getString("DateTime");
+                String score = resultSet.getString("score");
+                scoreList.put(dateTime,score);
+            }
+        } catch (Exception e) {
+            Log.d("error", e.getMessage());
+        }
+        return scoreList;
+    }
+
     public int insertPC(Acquaintance acquaintance){
         try {
             query = "INSERT INTO personal_collection VALUES("
@@ -196,12 +231,16 @@ public class MySQLImpl implements DataStoreManager{
             query = "SELECT * FROM user WHERE username =" + quotify(username) + " " +
                     "AND password = md5(" + quotify(password) + ")" + terminate();
 
+//            Log.d("jigolo", password);
+
             stmt = con.createStatement();
 
             resultSet = stmt.executeQuery(query);
 
-            if(resultSet.next())
+            if(resultSet.next()) {
+                Log.d("jigolo", "success");
                 return "Success";
+            }
 
         }catch(Exception e){
             Log.d("error", e.getMessage());

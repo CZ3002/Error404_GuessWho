@@ -26,4 +26,5 @@
     <string name="defaultText">I Suppose You Know Me. Let Us See If You Can Remember.
         Will you join us at dinner. Have a good night. See You in the Morning</string>
     <string name="defaultTokenFactory">&lt;token-factory-url&gt;</string>
+    <string name="title_activity_score">ScoreActivity</string>
 </resources>

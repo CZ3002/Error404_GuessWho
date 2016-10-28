@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.shrey_000.guesswho.HomeActivity;
 import com.example.shrey_000.guesswho.PersonalCollection.ViewPersonalCollectionActivity;
 import com.example.shrey_000.guesswho.R;
+import com.example.shrey_000.guesswho.ScoreActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -290,9 +291,11 @@ public class VoiceGameActivity extends AppCompatActivity{
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which){
-                    Toast.makeText(getApplicationContext(), "Total Score for this Session: " + scoreTotal, Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    DataStoreManager dbm = DataStoreFactory.createDataStoreManager();
+                    dbm.insertScore(username,"voice",scoreTotal);
+                    Intent intent = new Intent(getApplicationContext(), ScoreActivity.class);
                     intent.putExtra("username",username);
+                    intent.putExtra("game","voice");
                     startActivity(intent);
                 }
             });
@@ -310,5 +313,4 @@ public class VoiceGameActivity extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
