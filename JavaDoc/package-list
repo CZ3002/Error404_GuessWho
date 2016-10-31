@@ -1,0 +1,11 @@
+Entities
+Utilities
+com.example.shrey_000.guesswho
+com.example.shrey_000.guesswho.FaceGame
+com.example.shrey_000.guesswho.PersonalCollection
+com.example.shrey_000.guesswho.VoiceGame
+com.ibm.watson.developer_cloud.android.speech_common.v1
+com.ibm.watson.developer_cloud.android.speech_to_text.v1
+com.ibm.watson.developer_cloud.android.speech_to_text.v1.audio
+com.ibm.watson.developer_cloud.android.speech_to_text.v1.dto
+com.ibm.watson.developer_cloud.android.speech_to_text.v1.opus
