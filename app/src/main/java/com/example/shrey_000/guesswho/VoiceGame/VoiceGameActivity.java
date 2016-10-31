@@ -138,6 +138,11 @@ public class VoiceGameActivity extends AppCompatActivity{
         });
     }
 
+    /**
+     * Change the button shape based on the current state of the media player
+     * @param buttonId the id of button to be changed
+     * @param playing state of the player
+     */
     public void setPlayButton(final int buttonId, final boolean playing) {
         final Runnable runnableUi = new Runnable(){
             @Override
@@ -158,6 +163,11 @@ public class VoiceGameActivity extends AppCompatActivity{
         }.start();
     }
 
+    /**
+     * Get one particular question and answer from the pool of questions and answers
+     * @param dataSet Set of all questions and answers
+     * @return HashMap of the question and the answer
+     */
     public HashMap<String, String> getQuestionAndAnswer(HashMap<String, HashMap<String, ArrayList<String>>> dataSet){
         HashMap<String, String> output = new HashMap<>();
         int total = dataSet.size();
@@ -177,10 +187,18 @@ public class VoiceGameActivity extends AppCompatActivity{
         return output;
     }
 
+    /**
+     * initialize the correct answer
+     * @param correctAns
+     */
     public void setCorrectAns(String correctAns){
         this.correctAns = correctAns;
     }
 
+    /**
+     * Action to perform when choice 1 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice1(View view){
         selectedID = R.id.choice1Voice;
         view.setBackgroundColor(Color.DKGRAY);
@@ -190,6 +208,10 @@ public class VoiceGameActivity extends AppCompatActivity{
         findViewById(R.id.nextVoice).setEnabled(true);
     }
 
+    /**
+     * Action to perform when choice 2 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice2(View view){
         selectedID = R.id.choice2Voice;
         view.setBackgroundColor(Color.DKGRAY);
@@ -199,6 +221,10 @@ public class VoiceGameActivity extends AppCompatActivity{
         findViewById(R.id.nextVoice).setEnabled(true);
     }
 
+    /**
+     * Action to perform when choice 3 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice3(View view){
         selectedID = R.id.choice3Voice;
         view.setBackgroundColor(Color.DKGRAY);
@@ -208,6 +234,10 @@ public class VoiceGameActivity extends AppCompatActivity{
         findViewById(R.id.nextVoice).setEnabled(true);
     }
 
+    /**
+     * Action to perform when choice 4 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice4(View view){
         selectedID = R.id.choice4Voice;
         view.setBackgroundColor(Color.DKGRAY);
@@ -217,6 +247,11 @@ public class VoiceGameActivity extends AppCompatActivity{
         findViewById(R.id.nextVoice).setEnabled(true);
     }
 
+    /**
+     * Check the current answer. Then move to the next question
+     * @param view view where the action has to be performed
+     * @throws InterruptedException
+     */
     public void goToNext(View view) throws InterruptedException {
         checkAnswer();
         mHandler.postDelayed(new Runnable() {
@@ -233,14 +268,9 @@ public class VoiceGameActivity extends AppCompatActivity{
         }, 2500L);
     }
 
-//    public void goToView(View view){
-//        RadioGroup rg = (RadioGroup)findViewById(R.id.options);
-//        String selectedAnswer = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
-//        checkAnswer(selectedAnswer);
-//        Intent intentMain = new Intent(this,HomeActivity.class);
-//        startActivity(intentMain);
-//    }
-
+    /**
+     * Check if the selected answer is correct or not.
+     */
     private void checkAnswer() {
         if(correctID == selectedID) {
             findViewById(selectedID).setBackgroundColor(Color.GREEN);
@@ -261,6 +291,10 @@ public class VoiceGameActivity extends AppCompatActivity{
         }
     }
 
+    /**
+     * Display the updated score on the top-right corner of the view
+     * @param newScore updated score
+     */
     private void displayScore(int newScore) {
         TextView scoreView = (TextView) findViewById(R.id.scoreViewVoice);
         String scoreText = "Score: " + newScore;

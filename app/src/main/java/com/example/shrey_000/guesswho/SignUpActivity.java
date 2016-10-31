@@ -97,6 +97,9 @@ public class SignUpActivity extends AppCompatActivity {
         this.finish();
     }
 
+    /**
+     * Display the date picker dialog box
+     */
     private void showDateDialog(){
         Calendar cal = Calendar.getInstance();
         DatePickerDialog dateDialog = new DatePickerDialog(SignUpActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -115,6 +118,9 @@ public class SignUpActivity extends AppCompatActivity {
         dateDialog.show();
     }
 
+    /**
+     * Update the DOB label to the desired output form
+     */
     private void updateLabel() {
 
         String myFormat = "dd/MM/yy"; //In which you need put here

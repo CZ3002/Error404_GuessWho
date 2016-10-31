@@ -70,18 +70,26 @@ public class FaceGameActivity extends AppCompatActivity{
         poster.execute();
     }
 
+    /**
+     * initialize the correct answer
+     * @param correctAns
+     */
     public void setCorrectAns(String correctAns){
         this.correctAns = correctAns;
     }
 
-
+    /**
+     * Clear the view to draw new facial image
+     * @param v view which has to be cleared
+     */
     public void clearCanvas(View v) {
         cv.clearCanvas();
     }
 
-
-
-
+    /**
+     * Get the coordinates for the different facial fatures
+     * @param responseObj response object
+     */
     public void getMaps(JSONObject responseObj) throws JSONException {
         ce = new CoordinateExtractor(responseObj);
         ce.getLips();
@@ -133,6 +141,10 @@ public class FaceGameActivity extends AppCompatActivity{
     }
 
 
+    /**
+     * Display the eyes on the image
+     * @param view view where the action has to be performed
+     */
     public void revealEyes(View view)
     {
         Path eyesPath=cv.getEyesPath();
@@ -141,6 +153,11 @@ public class FaceGameActivity extends AppCompatActivity{
         eyesPath.reset();
         cv.invalidate();
     }
+
+    /**
+     * Display the nose on the image
+     * @param view view where the action has to be performed
+     */
     public void revealNose(View view)
     {
 
@@ -150,6 +167,11 @@ public class FaceGameActivity extends AppCompatActivity{
         nosePath.reset();
         cv.invalidate();
     }
+
+    /**
+     * Display the lips on the image
+     * @param view view where the action has to be performed
+     */
     public void revealLips(View view)
     {
         Path lipsPath=cv.getLipsPath();
@@ -159,6 +181,10 @@ public class FaceGameActivity extends AppCompatActivity{
         cv.invalidate();
     }
 
+    /**
+     * Action to perform when choice 1 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice1(View view){
         selectedAns = ((Button)view).getText().toString();
         view.setBackgroundColor(Color.YELLOW);
@@ -167,6 +193,10 @@ public class FaceGameActivity extends AppCompatActivity{
         ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
     }
 
+    /**
+     * Action to perform when choice 2 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice2(View view){
         selectedAns = ((Button)view).getText().toString();
         view.setBackgroundColor(Color.YELLOW);
@@ -175,6 +205,10 @@ public class FaceGameActivity extends AppCompatActivity{
         ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
     }
 
+    /**
+     * Action to perform when choice 3 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice3(View view){
         selectedAns = ((Button)view).getText().toString();
         view.setBackgroundColor(Color.YELLOW);
@@ -183,6 +217,10 @@ public class FaceGameActivity extends AppCompatActivity{
         ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
     }
 
+    /**
+     * Action to perform when choice 4 is clicked
+     * @param view view where the action has to be performed
+     */
     public void onChoice4(View view){
         selectedAns = ((Button)view).getText().toString();
         view.setBackgroundColor(Color.YELLOW);
@@ -191,18 +229,17 @@ public class FaceGameActivity extends AppCompatActivity{
         ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
     }
 
+    /**
+     * Check the current answer. Then move to the next question
+     * @param view view where the action has to be performed
+     */
     public void goToNext(View view){
         checkAnswer();
     }
 
-//    public void goToView(View view){
-//        RadioGroup rg = (RadioGroup)findViewById(R.id.options);
-//        String selectedAnswer = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
-//        checkAnswer(selectedAnswer);
-//        Intent intentMain = new Intent(this,HomeActivity.class);
-//        startActivity(intentMain);
-//    }
-
+    /**
+     * Check if the selected answer is correct or not.
+     */
     private void checkAnswer() {
         String message;
         if(correctAns.equals(selectedAns)) {
@@ -214,7 +251,7 @@ public class FaceGameActivity extends AppCompatActivity{
             scoreCalc.resetForNextQuestion(false);
         }
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which){
                 Intent intent = new Intent(getApplicationContext(),FaceGameActivity.class);
                 intent.putExtra("score",scoreCalc.getScoreTotal());
@@ -229,6 +266,10 @@ public class FaceGameActivity extends AppCompatActivity{
         alertDialog.show();
     }
 
+    /**
+     * Display the updated score on the top-right corner of the view
+     * @param newScore updated score
+     */
     private void updateScoreView(int newScore) {
         TextView scoreView = (TextView) findViewById(R.id.scoreView);
         String scoreText = "Score : " + newScore;
