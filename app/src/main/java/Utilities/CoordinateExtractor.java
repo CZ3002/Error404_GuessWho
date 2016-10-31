@@ -14,13 +14,21 @@ public class CoordinateExtractor {
 
     public JSONObject responseText;
 
+    /**
+     * Constructor for the CoordinateExtractor class
+     * @param responseText
+     */
     public CoordinateExtractor(JSONObject responseText)
     {
 
         this.responseText=responseText;
     }
 
-
+    /**
+     * Get Coordinates for the position of eye for a face
+     * @return a hashmap for different coordinates
+     * @throws JSONException
+     */
     public HashMap getEyes() throws JSONException {
 
         JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
@@ -42,7 +50,11 @@ public class CoordinateExtractor {
 
     }
 
-
+    /**
+     * Get Coordinates for position of eyebrows for a face
+     * @return a hashmap for different coordinates
+     * @throws JSONException
+     */
     public HashMap getEyeBrows() throws JSONException {
 
         JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
@@ -65,7 +77,11 @@ public class CoordinateExtractor {
     }
 
 
-
+    /**
+     * Get coordinates for position of the Nose for a face
+     * @return a hashmap for different coordinates
+     * @throws JSONException
+     */
     public HashMap getNose() throws JSONException {
 
         JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
@@ -88,7 +104,11 @@ public class CoordinateExtractor {
     }
 
 
-
+    /**
+     * Get coordinates for position of the lips for a face
+     * @return a hashmap for different coordinates
+     * @throws JSONException
+     */
     public HashMap<String, Double> getLips () throws JSONException {
         HashMap<String, Double> lipsMap = new HashMap<>();
         JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);
@@ -105,7 +125,13 @@ public class CoordinateExtractor {
         return lipsMap;
     }
 
-
+    /**
+     * Find the top and bottom position coordinates for the eyes
+     * For top: y take avg of two eyebrow sides, x remains same as middle of the eye
+     //For bottom: y take dist bw the eye top and eye centre, x remains same as middle of eye
+     * @return a hashmap for top and bottom coordinates
+     * @throws JSONException
+     */
     public HashMap<String,Double>  findEyes() throws JSONException {
         HashMap<String,Double> eyesMap=getEyes();
         HashMap<String,Double> eyeBrowsMap=getEyeBrows();
@@ -147,7 +173,13 @@ public class CoordinateExtractor {
 
     }
 
-
+    /**
+     * Find top and bottom coordinates for the nose
+     * noseBottomX=(noseMap.get("nostrilLeftSideX")+noseMap.get("nostrilRightSideX"))/2
+     * noseBottomY=(lipsMap.get("lipTopY")+noseMap.get("noseTipY"))/2
+     * @return a hashmap for top and bottom coordinates
+     * @throws JSONException
+     */
     public HashMap<String,Double>  findNose() throws JSONException {
         HashMap<String, Double> lipsMap = findLips();
         HashMap<String, Double> noseMap = getNose();
@@ -162,7 +194,11 @@ public class CoordinateExtractor {
         return noseMap;
     }
 
-
+    /**
+     * Find top and bottom coordinates for the lips
+     * @return a hashmap for top and bottom coordinates
+     * @throws JSONException
+     */
     public HashMap<String,Double>  findLips() throws JSONException {
         HashMap<String, Double> lipsMap = getLips();
         HashMap<String, Double> noseMap = getNose();
@@ -183,6 +219,11 @@ public class CoordinateExtractor {
         return lipsMap;
     }
 
+    /**
+     * Get the height and width of the image
+     * @return a hashmap for image width and height
+     * @throws JSONException
+     */
     public HashMap getWidthandHeight() throws JSONException {
 
         JSONObject imagesObj = (JSONObject) responseText.getJSONArray("images").get(0);

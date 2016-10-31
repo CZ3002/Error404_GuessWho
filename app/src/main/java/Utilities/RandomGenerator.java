@@ -13,12 +13,20 @@ public class RandomGenerator {
     private int numRows;
     private String[] fixedNames;
 
+    /**
+     * Constructor for class RandomGenerator
+     * @param numRows
+     */
     public RandomGenerator(int numRows)
     {
         this.numRows=numRows;
         this.fixedNames = new String[]{"Naruto", "Sasuke", "Pablo", "Berna", "Zheng Jie", "Zhang Jie", "Kelly", "Qui Zhi", "Qing Mei", "Tzoo Lai"};
     }
 
+    /**
+     * Get a random photo index
+     * @return index of the photo
+     */
     public int getRandomPhotoIndex()
     {
         Random r = new Random();
@@ -26,6 +34,11 @@ public class RandomGenerator {
         return i;
     }
 
+    /**
+     * Randomize the order of options for a question
+     * @param options
+     * @return string array with shuffled options
+     */
     public String[] randomizeOptionOrder(Object[] options){
         String[] shuffledOpt = new String[numRows];
         ArrayList<Integer> selectedIndices = new ArrayList<>();

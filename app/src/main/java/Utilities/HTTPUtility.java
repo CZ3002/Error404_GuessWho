@@ -56,6 +56,13 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     private HttpURLConnection connectionAPI = null;
     private DataStoreManager dbm;
 
+    /**
+     * Constructor for the class HTTPUtility
+     * @param username
+     * @param canvasView
+     * @param view
+     * @param context
+     */
     public HTTPUtility(String username, CanvasView canvasView, View view, Context context){
         this.username = username;
         this.canvasView = canvasView;
@@ -67,7 +74,11 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         dbm = DataStoreFactory.createDataStoreManager();
     }
 
-
+    /**
+     * Initiate a thread to do the face game processing in the background
+     * @param nothing
+     * @return a JSONObject
+     */
     protected JSONObject doInBackground(Void... nothing) {
         String responseStr = null;
         try {
@@ -93,6 +104,10 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
 
     }
 
+    /**
+     * Initialise option button with answer options and store the correct answer
+     * @param responseObj
+     */
     protected void onPostExecute(JSONObject responseObj) {
 
         try {
@@ -124,6 +139,12 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         }
     }
 
+    /**
+     * Generate random options for face game
+     * @param name
+     * @param rg
+     * @param contacts
+     */
     public void generateRandomOptions(String name, RandomGenerator rg, ArrayList<HashMap<String, String>> contacts){
         optionsList.add(name);
 
@@ -135,7 +156,12 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
     }
 
 
-
+    /**
+     * Process the Kairos response to retrieve required information
+     * @param responseText
+     * @return a JSONObject with necessary information
+     * @throws JSONException
+     */
     public JSONObject JSONProcessing(String responseText) throws JSONException {
 
         JSONObject jobj = new JSONObject(responseText);
@@ -144,8 +170,10 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         return jobj;
     }
 
-
-    //getting from database
+    /**
+     * Convert base64 image to a drawable
+     * @param base64
+     */
     public void convertBase64ToDrawable(String base64)
     {
         Bitmap bm;
@@ -154,6 +182,11 @@ public class HTTPUtility extends AsyncTask<Void, Void, JSONObject> {
         bd = new BitmapDrawable(null,bm);
     }
 
+    /**
+     * Generate an API call to Kairos for retrieving coordinates for eyebrows, eyes, nose and lips for the image passed as a base64 string
+     * @param base64
+     * @return API response as string
+     */
     public String getKairosResponse(String base64)
     {
         String urlParam = "{\"image\":\"" + base64 + "\",\"selector\":\"SETPOSE\"\r\n}";

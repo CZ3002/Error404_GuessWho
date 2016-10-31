@@ -163,8 +163,8 @@ public class PersonalCollectionActivity extends AppCompatActivity {
         private boolean initSTT() {
 
             // DISCLAIMER: please enter your credentials or token factory in the lines below
-            String username = "4af4482f-0c5a-4402-b2c1-a2185e4180e9";
-            String password = "7bhozArWiP7b";
+            String username = "2dc12809-26e8-4805-b4cb-15fa01e90025";
+            String password = "eZZboToVDvrp";
 
             String tokenFactoryURL = getString(R.string.defaultTokenFactory);
             String serviceURL = "wss://stream.watsonplatform.net/speech-to-text/api";
