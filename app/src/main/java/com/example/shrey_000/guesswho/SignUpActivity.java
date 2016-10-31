@@ -1,126 +1,282 @@
-package com.example.shrey_000.guesswho;
+package com.example.shrey_000.guesswho.FaceGame;
 
-import android.app.DatePickerDialog;
-import android.os.StrictMode;
-import android.os.Bundle;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Path;
+import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import com.example.shrey_000.guesswho.HomeActivity;
+import com.example.shrey_000.guesswho.R;
+import com.example.shrey_000.guesswho.ScoreActivity;
 
-import Entities.User;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import Utilities.CoordinateExtractor;
 import Utilities.DataStoreFactory;
 import Utilities.DataStoreManager;
+import Utilities.HTTPUtility;
+import Utilities.MySQLImpl;
+import Utilities.ScoreCalculatorFaceGame;
 
 
-/**
- *
- * Class used by new users during Sign Up
- * @author aakashgupta1236
- *
- */
-public class SignUpActivity extends AppCompatActivity {
-
-    EditText dob;
-
-    /**
-     * userDOB used to store user's date of birth
-     */
-    private Calendar userDob = Calendar.getInstance();
-
-    /**
-     * DataManager used to call functions that communicate with the database
-     */
-    private DataStoreManager dataStoreManager = DataStoreFactory.createDataStoreManager();
+public class FaceGameActivity extends AppCompatActivity{
+    private CanvasView cv;
+    private CoordinateExtractor ce;
+    private ScoreCalculatorFaceGame scoreCalc;
+    private String username;
+    private String correctAns = new String();
+    private String selectedAns = new String();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_face_game);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        username = getIntent().getStringExtra("username");
 
-        setContentView(R.layout.activity_sign_up);
+        Log.d("username",username);
 
-        Button signUp = (Button) findViewById(R.id.signUp);
+        findViewById(R.id.choice1).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice2).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice3).setVisibility(View.INVISIBLE);
+        findViewById(R.id.choice4).setVisibility(View.INVISIBLE);
 
-        signUp.setOnClickListener(new View.OnClickListener() {
+        View view = findViewById(R.id.imageView);
 
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                signUp();
-            }
-        });
+        Intent intent = getIntent();
+        int scoreTotal = intent.getIntExtra("score",0);
+        scoreCalc = new ScoreCalculatorFaceGame();
+        scoreCalc.setScoreTotal(scoreTotal);
 
-        dob = (EditText) findViewById(R.id.userDOBSignUp);
+        // Update the score
+        updateScoreView(scoreCalc.getScoreTotal());
 
-        dob.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                showDateDialog();
-            }
-        });
+        cv = (CanvasView) findViewById(R.id.canvas);
 
-        dob.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                // TODO Auto-generated method stub
-                if (hasFocus) {
-                    showDateDialog();
-                }
-            }
-        });
+        HTTPUtility poster = new HTTPUtility(username,cv,view,this);
+        poster.execute();
     }
 
     /**
-     * Function used to input field values from patient during Sign Up
+     * initialize the correct answer
+     * @param correctAns
      */
-    private void signUp(){
-        User user = new User();
-        user.setUsername(((EditText)findViewById(R.id.userIdSignUp)).getText().toString());
-        user.setName(((EditText) findViewById(R.id.userNameSignUp)).getText().toString());
-        user.setPassword(((EditText) findViewById(R.id.userPasswordSignUp)).getText().toString());
-        user.setContact(((EditText) findViewById(R.id.userContactSignUp)).getText().toString());
-        user.setDOB(((EditText) findViewById(R.id.userDOBSignUp)).getText().toString());
-
-        dataStoreManager.createUser(user);
-        Toast.makeText(SignUpActivity.this, "User successfully registered", Toast.LENGTH_LONG).show();
-        this.finish();
+    public void setCorrectAns(String correctAns){
+        this.correctAns = correctAns;
     }
 
-    private void showDateDialog(){
-        Calendar cal = Calendar.getInstance();
-        DatePickerDialog dateDialog = new DatePickerDialog(SignUpActivity.this, new DatePickerDialog.OnDateSetListener() {
+    /**
+     * Clear the view to draw new facial image
+     * @param v view which has to be cleared
+     */
+    public void clearCanvas(View v) {
+        cv.clearCanvas();
+    }
 
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                userDob.set(Calendar.YEAR, year);
-                userDob.set(Calendar.MONTH, monthOfYear);
-                userDob.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+    /**
+     * Get the coordinates for the different facial fatures
+     * @param responseObj response object
+     */
+    public void getMaps(JSONObject responseObj) throws JSONException {
+        ce = new CoordinateExtractor(responseObj);
+        ce.getLips();
+        ce.findEyes();
+        ce.getNose();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_back) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which){
+                    DataStoreManager dbm = DataStoreFactory.createDataStoreManager();
+                    dbm.insertScore(username,"face",scoreCalc.getScoreTotal());
+                    Intent intent = new Intent(getApplicationContext(), ScoreActivity.class);
+                    intent.putExtra("username",username);
+                    intent.putExtra("game","face");
+                    startActivity(intent);
+                }
+            });
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+
+                };
+            });
+            alertDialog.setTitle("Confirm Exit?");
+            alertDialog.setMessage("Are you sure you want to exit?");
+            alertDialog.setCancelable(true);
+            alertDialog.create();
+            alertDialog.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    /**
+     * Display the eyes on the image
+     * @param view view where the action has to be performed
+     */
+    public void revealEyes(View view)
+    {
+        Path eyesPath=cv.getEyesPath();
+        if(!eyesPath.isEmpty())
+            scoreCalc.incrementFeaturesRevealed();
+        eyesPath.reset();
+        cv.invalidate();
+    }
+
+    /**
+     * Display the nose on the image
+     * @param view view where the action has to be performed
+     */
+    public void revealNose(View view)
+    {
+
+        Path nosePath=cv.getNosePath();
+        if(!nosePath.isEmpty())
+            scoreCalc.incrementFeaturesRevealed();
+        nosePath.reset();
+        cv.invalidate();
+    }
+
+    /**
+     * Display the lips on the image
+     * @param view view where the action has to be performed
+     */
+    public void revealLips(View view)
+    {
+        Path lipsPath=cv.getLipsPath();
+        if(!lipsPath.isEmpty())
+            scoreCalc.incrementFeaturesRevealed();
+        lipsPath.reset();
+        cv.invalidate();
+    }
+
+    /**
+     * Action to perform when choice 1 is clicked
+     * @param view view where the action has to be performed
+     */
+    public void onChoice1(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice2)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    /**
+     * Action to perform when choice 2 is clicked
+     * @param view view where the action has to be performed
+     */
+    public void onChoice2(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice1)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    /**
+     * Action to perform when choice 3 is clicked
+     * @param view view where the action has to be performed
+     */
+    public void onChoice3(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice1)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice2)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice4)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    /**
+     * Action to perform when choice 4 is clicked
+     * @param view view where the action has to be performed
+     */
+    public void onChoice4(View view){
+        selectedAns = ((Button)view).getText().toString();
+        view.setBackgroundColor(Color.YELLOW);
+        ((Button)findViewById(R.id.choice1)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice2)).setBackgroundResource(android.R.drawable.btn_default);
+        ((Button)findViewById(R.id.choice3)).setBackgroundResource(android.R.drawable.btn_default);
+    }
+
+    /**
+     * Check the current answer. Then move to the next question
+     * @param view view where the action has to be performed
+     */
+    public void goToNext(View view){
+        checkAnswer();
+    }
+
+    /**
+     * Check if the selected answer is correct or not.
+     */
+    private void checkAnswer() {
+        String message;
+        if(correctAns.equals(selectedAns)) {
+            message = "Correct Answer.";
+            scoreCalc.resetForNextQuestion(true);
+        }
+        else {
+            message = "Wrong Answer. Correct Answer is " + correctAns;
+            scoreCalc.resetForNextQuestion(false);
+        }
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which){
+                Intent intent = new Intent(getApplicationContext(),FaceGameActivity.class);
+                intent.putExtra("score",scoreCalc.getScoreTotal());
+                intent.putExtra("username",username);
+                startActivity(intent);
             }
-
-        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-        dateDialog.show();
+        });
+        alertDialog.setTitle("Result");
+        alertDialog.setMessage(message);
+        alertDialog.setCancelable(false);
+        alertDialog.create();
+        alertDialog.show();
     }
 
-    private void updateLabel() {
-
-        String myFormat = "dd/MM/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        dob.setText(sdf.format(userDob.getTime()));
+    /**
+     * Display the updated score on the top-right corner of the view
+     * @param newScore updated score
+     */
+    private void updateScoreView(int newScore) {
+        TextView scoreView = (TextView) findViewById(R.id.scoreView);
+        String scoreText = "Score : " + newScore;
+        scoreView.setText(scoreText);
     }
 
+    @Override
+    public void onBackPressed(){
+    }
 }
